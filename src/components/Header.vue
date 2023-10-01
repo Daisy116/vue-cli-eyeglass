@@ -29,7 +29,15 @@ export default {
 	const goLang = () => {
 		isPhoneLang.value = !isPhoneLang.value;
 		console.log(isPhoneLang.value)
-	}
+	};
+	const closeCollapse = (id) => {
+		$("#navbarNav").toggleClass("show");
+
+		// 點擊導覽列的圖片，回到首頁的同時將菜單收起來
+		if (id == 0) {
+			$("#navbarNav").removeClass("show");
+		}
+	};
 
 	// 用watch監控網址，若網址改變了，文字顏色也同時要改變！
 	watch(
@@ -60,7 +68,7 @@ export default {
 		route,
 		t, locale,
 		isSearch, isPhoneLang,
-		goTop, goSearch, goLang
+		goTop, goSearch, goLang, closeCollapse
 	};
   }
 }
@@ -162,7 +170,7 @@ export default {
 	<!-- 手機版的導覽列 -->
 	<nav class="navbar navbar-expand-lg">
 		<div class="container-fluid">
-			<router-link to="/">
+			<router-link to="/" @click="closeCollapse(0)">
 				<img src="https://www.youngman.com.tw/images/LOGO03.png" class="logo-image">
 			</router-link>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -176,19 +184,19 @@ export default {
 					</a>
 					<div class="collapse" id="collapseBox1">
 						<span>
-							<router-link to="/about" class="dropdown-item">關於我們</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">門市查詢</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">聯絡我們</router-link>
+							<router-link to="/about" @click="closeCollapse" class="dropdown-item">關於我們</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">門市查詢</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">聯絡我們</router-link>
 						</span>
 					</div>
 				</li>
 				<li class="nav-item">
-					<router-link to="/news" class="nav-link">
+					<router-link to="/news" @click="closeCollapse" class="nav-link">
 						{{ t("navbar-news") }}
 					</router-link>
 				</li>
 				<li class="nav-item">
-					<router-link to="/NotFound404" class="nav-link">{{ t("navbar-mall") }}</router-link>
+					<router-link to="/NotFound404" @click="closeCollapse" class="nav-link">{{ t("navbar-mall") }}</router-link>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#collapseBox2" role="button" aria-expanded="false" aria-controls="collapseExample">
@@ -196,21 +204,21 @@ export default {
 					</a>
 					<div class="collapse" id="collapseBox2">
 						<div>
-							<router-link to="/NotFound404" class="dropdown-item">海昌</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">酷柏</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">加美</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">晶碩</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">美若康</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">愛爾康</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">博士倫</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">卡沛兒</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">永恆之美</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">嬌生安視優</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">OPT(圓瑞)</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">NOBEL(魔麗)</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">Anley(安儷)</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">Kosmo(蔻思茉)</router-link>
-							<router-link to="/NotFound404" class="dropdown-item">ARdes(彩色月拋)</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">海昌</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">酷柏</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">加美</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">晶碩</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">美若康</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">愛爾康</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">博士倫</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">卡沛兒</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">永恆之美</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">嬌生安視優</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">OPT(圓瑞)</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">NOBEL(魔麗)</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">Anley(安儷)</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">Kosmo(蔻思茉)</router-link>
+							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">ARdes(彩色月拋)</router-link>
 						</div>
 					</div>
 				</li>
@@ -230,8 +238,8 @@ export default {
 					</a>
 					<div class="collapse" id="collapseBox4">
 						<span>
-							<router-link to="/product/F0001" :key="route.path" class="dropdown-item">亮萌</router-link>
-                    		<router-link to="/product/F0002" :key="route.path" class="dropdown-item">鏡片清潔香波</router-link>
+							<router-link to="/product/F0001" :key="route.path" @click="closeCollapse" class="dropdown-item">亮萌</router-link>
+                    		<router-link to="/product/F0002" :key="route.path" @click="closeCollapse" class="dropdown-item">鏡片清潔香波</router-link>
 						</span>
 					</div>
 				</li>
