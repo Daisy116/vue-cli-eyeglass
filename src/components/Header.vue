@@ -89,7 +89,7 @@ export default {
             </li>
             <li>
                 <span>
-					<router-link to="/NotFound404" class="dropdown-item">{{ t("navbar-mall") }}</router-link>
+					<router-link to="/NotFound404">{{ t("navbar-mall") }}</router-link>
 				</span>
             </li>
             <li>
@@ -411,10 +411,14 @@ export default {
 					}
 					.li-box {
 						display: flex;
+						text-align: left;
 					}
 					.li-box2 {
-						display: flex;
-						flex-wrap: wrap;
+						display: block;
+						 .dropdown-item {
+							width: auto;
+							text-align: left;
+						 }
 					}
 				}
 
