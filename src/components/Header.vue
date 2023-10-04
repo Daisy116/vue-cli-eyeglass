@@ -1,9 +1,7 @@
 <script>
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from 'vue-router';
-import Header from "@/components/Header.vue";
-import Footer from "@/components/Footer.vue";
 import $ from 'jquery';
 
 export default {
@@ -17,7 +15,6 @@ export default {
 	const { t, locale } = useI18n();
 	// isSearch控制PC的放大鏡搜尋畫面
 	const isSearch = ref(true);
-	const isPhoneLang = ref(false);
 
 	const goTop = () => {
 		// 使用jQuery的scrollTop實作置頂功能，並用animate方法慢慢往上移
@@ -25,10 +22,6 @@ export default {
 	};
 	const goSearch = () => {
 		isSearch.value = !isSearch.value;
-	};
-	const goLang = () => {
-		isPhoneLang.value = !isPhoneLang.value;
-		console.log(isPhoneLang.value)
 	};
 	const closeCollapse = (id) => {
 		$("#navbarNav").toggleClass("show");
@@ -39,17 +32,21 @@ export default {
 		}
 	};
 
-	// 用watch監控網址，若網址改變了，文字顏色也同時要改變！
+	// 用 watch 監控網址
 	watch(
-	// 第一個參數帶要監控的變數，這裡監控route.path！！！
-	()=> route.path, 
-	()=> {
+	()=> route.path, // 第一個參數帶要監控的變數，這裡監控route.path
+	(newA, oldA)=> {
 		// console.log("目前路徑=>", route.path);
+		// console.log("下一個path =>", newA);
+		// console.log("上一個path =>", oldA);
+		
+		// router.push("/");
+
 		if (routerArr.includes(route.path)) {
-			let i = route.path;
-			router.push({ path: `${route.path}` });
-			console.log(route.path)
-			return;
+			// let i = route.path;
+			// router.push({ path: `${route.path}` });
+			// console.log(route.path)
+			// return;
 		}			
 	}
 	);
@@ -67,8 +64,8 @@ export default {
 	return {
 		route,
 		t, locale,
-		isSearch, isPhoneLang,
-		goTop, goSearch, goLang, closeCollapse
+		isSearch,
+		goTop, goSearch, closeCollapse
 	};
   }
 }
@@ -86,7 +83,7 @@ export default {
                 <span>{{ t("navbar-about") }}</span>
                 <div class="li-box">
                     <router-link to="/about">關於我們</router-link>
-                    <router-link to="/NotFound404" class="dropdown-item">門市查詢</router-link>
+                    <router-link to="/about1" class="dropdown-item">門市查詢</router-link>
 					<router-link to="/NotFound404" class="dropdown-item">聯絡我們</router-link>
                 </div>
             </li>

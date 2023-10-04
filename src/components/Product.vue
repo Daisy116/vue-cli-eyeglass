@@ -1,6 +1,6 @@
 <script>
 import { useRoute } from "vue-router";
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import axios from "axios";
 import $ from 'jquery';
 
@@ -8,12 +8,17 @@ export default {
     setup() {
         const route = useRoute();
         const product = reactive({data: {}});
+        const allDate = reactive({data: {}});
 
         onMounted(() => {
             axios.get(`https://run.mocky.io/v3/9186eeb8-0592-4fcf-914c-d46a46fa0a75`)
             .then(res => {
+                // 初始化輸出到畫面的資料
                 product.data = res.data[route.params.id];
                 product.title = res.data["sort"][route.params.id];
+                
+                // 儲存原始資料，在watch時使用
+                allDate.data = res.data;
             })
         });
 
@@ -26,6 +31,16 @@ export default {
             styles.removeProperty("display");
         }
 
+        // 用 watch 監控網址
+        watch(
+        ()=> route.path, // 第一個參數帶要監控的變數，這裡監控route.path
+        (newA, oldA)=> {
+            // 當router的路徑改變，輸出到畫面的資料也要改變
+            product.title = allDate.data["sort"][route.params.id];
+            product.data = allDate.data[route.params.id];
+        }
+        );
+
         return { product, goLike, removeLike };
     }
 }
@@ -33,6 +48,7 @@ export default {
 
 <template>
     <div class="blank"></div>
+
     <div class="container">
         <!-- 左側產品選單 -->
         <div class="sidebar">
@@ -127,6 +143,11 @@ export default {
 
                 a {
                     color: black;
+                    font-size: 18px;
+                }
+                a.router-link-active {
+                    color: rgb(255, 145, 0);
+                    font-weight: 700;
                 }
             }
         }

@@ -5,9 +5,21 @@ export default {
 </script>
 
 <template>
-    <h1>This is index.vue page</h1>
+    <div class="main">
+        <h1>This is index.vue page</h1>
+    </div>
 </template>
 
-<style>
+<style lang="scss" scoped>
+    .main {
+        margin-left: 250px;
+        height: calc(100vh - 400px);
+        background-color: olive;
+        color: azure;
+        text-align: center;
 
+        h1 {
+            line-height: calc(100vh - 400px);
+        }
+    }
 </style>

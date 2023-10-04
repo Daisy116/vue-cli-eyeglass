@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import NotFoundComponent from '../views/NotFoundComponent.vue'
-import Course from '../views/Course/index.vue'
 
+import Course from '../views/Course/index.vue'
 import Guide from '../views/About/Guide.vue'
 import Changelog from '../views/About/Changelog.vue'
 import Github from '../views/About/Github.vue'
@@ -32,7 +32,7 @@ const routes = [
   },
   {
     // 保健＆周邊
-    path: '/product/:id',
+    path: '/:product/:id',
     name: 'product',
     component: () => import('../components/Product.vue'),
   },

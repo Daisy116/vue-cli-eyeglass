@@ -47,10 +47,10 @@ export default {
 
 <style lang="scss" scoped>
 #courses {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 a.card {
   cursor: pointer;

@@ -13,9 +13,6 @@ import 'bootstrap/js/dist/collapse';
 // 透過載入css檔案，將css設定塞入網頁！
 import "@/assets/css/reset.css";
 
-// 透過載入js檔案，使用裡面的函式來產生千分位符號！
-import {numPrice} from "@/lib/tools.js"
-
 
 const i18n = createI18n({
     legacy: false,
