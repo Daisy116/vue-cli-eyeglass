@@ -64,11 +64,10 @@ export default {
                         newStore.push(...item["store-id"]);
                     });
                     searchData.store = location.store.filter(store => newStore.includes(store.id));
-                    
+                    storeActive.value = "";
                     return;
                 }
                 if (cityActive.value == '') {
-                    console.log("here");
                     return;
                 }
             }
@@ -238,7 +237,6 @@ export default {
 
         form {
             padding: 40px 0;
-            color: #0E387B;
             text-align: center;
             display: flex;
             justify-content: center;
@@ -247,6 +245,7 @@ export default {
 
             h3 {
                 width: 100%;
+                color: #0E387B;
                 font-size: 32px;
                 position: relative;
 
