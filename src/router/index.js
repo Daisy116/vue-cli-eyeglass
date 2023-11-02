@@ -31,10 +31,28 @@ const routes = [
     component: () => import('../views/NewsView.vue'),
   },
   {
+    // 門市查詢
+    path: '/location',
+    name: 'location',
+    component: () => import('../views/LocationView.vue'),
+  },
+  {
     // 保健＆周邊
     path: '/:product/:id',
     name: 'product',
     component: () => import('../components/Product.vue'),
+  },
+  {
+    // 聯絡我們
+    path: '/contact',
+    name: 'contact',
+    component: () => import('../views/ContactUsView.vue'),
+  },
+  {
+    // 常見問題
+    path: '/FAQ',
+    name: 'qa',
+    component: () => import('../views/FAQView.vue'),
   },
   {
     path: '/about1',

@@ -89,6 +89,9 @@ template {
 a {
   background-color: transparent;
   text-decoration: none;
+
+  /* 不要預設的藍色字體 */
+	color: inherit;
 }
 
 /**

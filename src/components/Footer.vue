@@ -6,13 +6,25 @@ export default {
   setup() {
     const { t, locale } = useI18n();
 
+	const goTab = (str) => {
+		let string = "#" + str;
+		// 用offset()抓取該區塊的位置
+		let top = $(string).offset().top;
+
+		// 因為最上面有84px的navbar，所以要扣掉 84！
+		top = top - 84;
+		// 當滾輪在下方，頁面會從下往上...
+		$("html, body").animate({scrollTop: top}, 100);
+	}
+
     watch(locale, (newlocale) => {
       localStorage.setItem("locale", newlocale);
     });
 
     return {
-      t, 
-      locale};
+      t, locale,
+	  goTab
+	};
   }
 }
 </script>
@@ -25,28 +37,42 @@ export default {
                 <ul>
                     <li>
                         <h4>{{ t("footer-about") }}</h4>
-                        <p>{{ t("footer-about1") }}</p>
-                        <p>{{ t("footer-about2") }}</p>
-                        <p>{{ t("footer-about3") }}</p>
-                        <p>{{ t("footer-about4") }}</p>
+                        <p>
+							<router-link @click.enter="goTab('about1')" to="/about">{{ t("footer-about1") }}</router-link>
+						</p>
+                        <p>
+							<router-link @click.enter="goTab('about2')" to="/about">{{ t("footer-about2") }}</router-link>
+						</p>
+                        <p>
+							<router-link @click.enter="goTab('about3')" to="/about">{{ t("footer-about3") }}</router-link>
+						</p>
+                        <p>
+							<router-link to="/location">{{ t("footer-about4") }}</router-link>
+						</p>
                     </li>
                     <li>
                         <h4>{{ t("footer-news") }}</h4>
-                        <p>{{ t("navbar-news") }}</p>
-                        <p>{{ t("footer-news2") }}</p>
+                        <p>
+							<router-link to="/news">{{ t("navbar-news") }}</router-link>
+						</p>
                     </li>
                     <li>
-                        <h4>{{ t("footer-shop") }}</h4>
-                        <p>{{ t("footer-shop1") }}</p>
-                        <p>{{ t("footer-shop2") }}</p>
-                        <p>{{ t("footer-shop3") }}</p>
-                        <p>{{ t("footer-shop4") }}</p>
-                        <p>{{ t("footer-shop5") }}</p>
+                        <h4>{{ t("footer-health") }}</h4>
+						<p>
+							<router-link to="/product/F0001">{{ t("footer-health1") }}</router-link>
+						</p>
+                        <p>
+							<router-link to="/product/F0002">{{ t("footer-health2") }}</router-link>
+						</p>
                     </li>
                     <li>
                         <h4>{{ t("footer-service") }}</h4>
-                        <p>{{ t("footer-service1") }}</p>
-                        <p>{{ t("footer-service2") }}</p>
+                        <p>
+							<router-link to="/contact">{{ t("footer-service1") }}</router-link>
+						</p>
+                        <p>
+							<router-link to="/FAQ">{{ t("footer-service2") }}</router-link>
+						</p>
                     </li>
                 </ul>
             </div>

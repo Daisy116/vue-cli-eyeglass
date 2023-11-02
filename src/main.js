@@ -6,6 +6,8 @@ import ja from "./language/ja-JP.json";
 
 import App from './App.vue'
 import router from './router'
+
+// 載入bootstrap
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/js/dist/dropdown';
 import 'bootstrap/js/dist/collapse';

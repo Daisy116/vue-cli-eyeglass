@@ -83,14 +83,21 @@ export default {
                 <span>{{ t("navbar-about") }}</span>
                 <div class="li-box">
                     <router-link to="/about">關於我們</router-link>
-                    <router-link to="/about1" class="dropdown-item">門市查詢</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">聯絡我們</router-link>
+                    <router-link to="/location" class="dropdown-item">門市查詢</router-link>
+					<router-link to="/contact" class="dropdown-item">聯絡我們</router-link>
                 </div>
             </li>
             <li>
                 <span>
 					<router-link to="/news">{{ t("navbar-news") }}</router-link>
 				</span>
+            </li>
+			<li>
+                <span>{{ t("navbar-health") }}</span>
+                <div class="li-box">
+                    <router-link to="/product/F0001" :key="route.path">{{ t("footer-health1") }}</router-link>
+                    <router-link to="/product/F0002" :key="route.path">{{ t("footer-health2") }}</router-link>
+                </div>
             </li>
             <li>
                 <span>
@@ -121,13 +128,6 @@ export default {
                 <span>{{ t("navbar-glasses") }}</span>
                 <div class="li-box">
                     <router-link to="/NotFound404" class="dropdown-item">Young Man X Ti Glasses</router-link>
-                </div>
-            </li>
-            <li>
-                <span>{{ t("navbar-health") }}</span>
-                <div class="li-box">
-                    <router-link to="/product/F0001" :key="route.path">亮萌</router-link>
-                    <router-link to="/product/F0002" :key="route.path">鏡片清潔香波</router-link>
                 </div>
             </li>
         </ul>
@@ -182,8 +182,8 @@ export default {
 					<div class="collapse" id="collapseBox1">
 						<span>
 							<router-link to="/about" @click="closeCollapse" class="dropdown-item">關於我們</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">門市查詢</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">聯絡我們</router-link>
+							<router-link to="/location" @click="closeCollapse" class="dropdown-item">門市查詢</router-link>
+							<router-link to="/contact" @click="closeCollapse" class="dropdown-item">聯絡我們</router-link>
 						</span>
 					</div>
 				</li>
@@ -191,6 +191,17 @@ export default {
 					<router-link to="/news" @click="closeCollapse" class="nav-link">
 						{{ t("navbar-news") }}
 					</router-link>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#collapseBox4" role="button" aria-expanded="false" aria-controls="collapseExample">
+						{{ t("navbar-health") }}
+					</a>
+					<div class="collapse" id="collapseBox4">
+						<span>
+							<router-link to="/product/F0001" :key="route.path" @click="closeCollapse" class="dropdown-item">{{ t("footer-health1") }}</router-link>
+                    		<router-link to="/product/F0002" :key="route.path" @click="closeCollapse" class="dropdown-item">{{ t("footer-health2") }}</router-link>
+						</span>
+					</div>
 				</li>
 				<li class="nav-item">
 					<router-link to="/NotFound404" @click="closeCollapse" class="nav-link">{{ t("navbar-mall") }}</router-link>
@@ -226,17 +237,6 @@ export default {
 					<div class="collapse" id="collapseBox3">
 						<span>
 							<router-link to="/NotFound404" class="dropdown-item">Young Man X Ti Glasses</router-link>
-						</span>
-					</div>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#collapseBox4" role="button" aria-expanded="false" aria-controls="collapseExample">
-						{{ t("navbar-health") }}
-					</a>
-					<div class="collapse" id="collapseBox4">
-						<span>
-							<router-link to="/product/F0001" :key="route.path" @click="closeCollapse" class="dropdown-item">亮萌</router-link>
-                    		<router-link to="/product/F0002" :key="route.path" @click="closeCollapse" class="dropdown-item">鏡片清潔香波</router-link>
 						</span>
 					</div>
 				</li>

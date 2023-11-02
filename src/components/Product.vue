@@ -1,5 +1,6 @@
 <script>
 import { useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { onMounted, reactive, ref, watch } from 'vue';
 import axios from "axios";
 import $ from 'jquery';
@@ -7,18 +8,23 @@ import $ from 'jquery';
 export default {
     setup() {
         const route = useRoute();
+        const { t, locale } = useI18n();
         const product = reactive({data: {}});
         const allDate = reactive({data: {}});
+        const isLoading = ref(true);
 
         onMounted(() => {
             axios.get(`https://run.mocky.io/v3/9186eeb8-0592-4fcf-914c-d46a46fa0a75`)
             .then(res => {
-                // 初始化輸出到畫面的資料
-                product.data = res.data[route.params.id];
-                product.title = res.data["sort"][route.params.id];
-                
-                // 儲存原始資料，在watch時使用
-                allDate.data = res.data;
+                setTimeout(()=> {
+                    // 初始化輸出到畫面的資料
+                    product.data = res.data[route.params.id];
+                    product.title = res.data["sort"][route.params.id];
+                    // 儲存原始資料，在watch時使用
+                    allDate.data = res.data;
+                    
+                    isLoading.value = !isLoading.value;
+                }, 1000);
             })
         });
 
@@ -40,8 +46,16 @@ export default {
             product.data = allDate.data[route.params.id];
         }
         );
+        watch(locale, (newlocale) => {
+            localStorage.setItem("locale", newlocale);
+        });
 
-        return { product, goLike, removeLike };
+        return { 
+            product, 
+            isLoading,
+            goLike, removeLike,
+            t, locale,
+        };
     }
 }
 </script>
@@ -52,20 +66,26 @@ export default {
     <div class="container">
         <!-- 左側產品選單 -->
         <div class="sidebar">
-            <h3>保健＆周邊</h3>
+            <h3>{{ t("footer-health") }}</h3>
             <ul>
                 <li>
-                    <router-link to="/product/F0001">亮萌</router-link>
+                    <router-link to="/product/F0001">{{ t("footer-health1") }}</router-link>
                 </li>
                 <li>
-                    <router-link to="/product/F0002">鏡片清潔香波</router-link>
+                    <router-link to="/product/F0002">{{ t("footer-health2") }}</router-link>
                 </li>
             </ul>
         </div>
         <!-- 右側PC產品列表 -->
         <div class="main-list">
-            <h1>{{ product.title }}</h1>
+            <!-- loading的svg -->
+            <svg class="loading" v-show="isLoading" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+                <path d="M10 50A40 40 0 0 0 90 50A40 44.5 0 0 1 10 50" fill="#e15b64" stroke="none">
+                <animateTransform attributeName="transform" type="rotate" dur="1s" repeatCount="indefinite" keyTimes="0;1" values="0 50 52.25;360 50 52.25"></animateTransform>
+                </path>
+            </svg>
 
+            <h1>{{ product.title }}</h1>
             <ul class="product-box" >
                 <li v-for="(item, idx) in product.data" :key="item.img">
                     <div class="img-box">
@@ -89,7 +109,7 @@ export default {
                 </li>
             </ul>
 
-            <div class="page-wrap">
+            <div class="page-wrap" v-show="!isLoading">
                 <ul>
                     <li class="page-button">
                         <a href="">&lt;</a>
@@ -133,7 +153,7 @@ export default {
             text-align: start;
         }
         .sidebar {
-            width: 200px;
+            width: 300px;
             padding: 30px 20px;
             position: absolute;
             left: 0;
@@ -153,7 +173,7 @@ export default {
         }
         .main-list {
             width: 100%;
-            margin-left: 200px;
+            margin-left: 300px;
 
             .product-box {
                 display: flex;
@@ -219,6 +239,7 @@ export default {
                 >ul {
                     display: flex;
                     justify-content: center;
+                    transform: translateX(-300px);
 
                     >li {
                         width: 40px;
@@ -240,6 +261,14 @@ export default {
                         }
                     }
                 }
+            }
+            .loading {
+                max-height: 800px;
+                margin: 0 auto;
+                padding: 200px 0;
+                transform: translateX(-300px);
+                background:#fff;
+                display:block;
             }
         }
     }
@@ -275,6 +304,12 @@ export default {
                 }
                 .page-wrap {
                     margin: 0px 0 25px 0;
+                }
+                .loading {
+                    height: 250px;
+                    padding: 0;
+                    margin: 100px auto;
+                    transform: translateX(0);
                 }
             }
         }

@@ -8,7 +8,7 @@ export default {
             // 用offset()抓取該區塊的位置
             let top = $(string).offset().top;
 
-            // 因為最上面有84px的navbar，所以要扣掉84！
+            // 因為最上面有84px的navbar，所以要扣掉 84！
             top = top - 84;
             $("html, body").animate({scrollTop: top}, 400);
         };
@@ -251,9 +251,6 @@ export default {
                         }
                     }
                 }
-            }
-            .listbox li {
-                
             }
         }
         
