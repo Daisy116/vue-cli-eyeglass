@@ -79,7 +79,7 @@ export default {
             <div class="service">
 				<div>
 					<h4 class="phoneNum">{{ t("footer-phone") }}</h4>
-					<p>0800-700-881</p>
+					<a href="tel:0800007188">0800-700-881</a>
 				</div>
                 <div class="phone-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="23" height="26" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
@@ -144,9 +144,9 @@ export default {
 		.logo-image {
 			height: 64px;
 		}
-		.service > p:hover {
+		.service a:hover {
 			color: #985555;
-			cursor: pointer;
+			font-weight: bold;
 		}
 		.phoneNum {
 			text-align: left;
@@ -191,10 +191,9 @@ export default {
 	// 手機版
 	@media screen and (min-width: 0px) and (max-width: 490px) {
 		.footer {
-			// max-width: 100vh;
-			padding: 16px 0;
+			padding: 0 0 16px 0;
 			height: 100%;
-			margin: 0 0 10px 0;
+			margin: 10px 0;
 			display: block;
 
 			img {
@@ -203,7 +202,7 @@ export default {
 				object-fit: contain;
 			}
 			.wrap {
-				margin: 16px 0;
+				margin: 0 0 16px 0;
 
 				ul {
 					display: flex;

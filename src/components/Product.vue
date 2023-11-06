@@ -9,12 +9,15 @@ export default {
     setup() {
         const route = useRoute();
         const { t, locale } = useI18n();
+
         const product = reactive({data: {}});
         const allDate = reactive({data: {}});
         const isLoading = ref(true);
+        const page = ref(1);
+        const maxPage = ref(1);
 
         onMounted(() => {
-            axios.get(`https://run.mocky.io/v3/9186eeb8-0592-4fcf-914c-d46a46fa0a75`)
+            axios.get(`https://run.mocky.io/v3/10b6e5c4-0d7d-473f-8858-b6be7f5c3094`)
             .then(res => {
                 setTimeout(()=> {
                     // 初始化輸出到畫面的資料
@@ -22,7 +25,16 @@ export default {
                     product.title = res.data["sort"][route.params.id];
                     // 儲存原始資料，在watch時使用
                     allDate.data = res.data;
-                    
+
+                    // 當資料超過8筆時，第一頁只顯示前8筆資料
+                    if (res.data[route.params.id].length > 8 && screen.width > 490) {
+                        // 初始化輸出到畫面的資料
+                        product.data = res.data[route.params.id].slice(0, 8);
+                        // 一頁放8筆資料
+                        maxPage.value = Math.ceil(allDate.data[route.params.id].length / 8);
+                    }
+
+                    // 將loading動畫關掉
                     isLoading.value = !isLoading.value;
                 }, 1000);
             })
@@ -36,6 +48,22 @@ export default {
             let styles = $(".bi-suit-heart-fill")[idx].style;
             styles.removeProperty("display");
         }
+        const prePage = () => {
+            page.value--;
+            if (page.value < 1) {
+                page.value = 1;
+            }
+            // product.data = allDate.data[route.params.id].slice(0, 8);
+            product.data = allDate.data[route.params.id].slice(page.value - 1, page.value * 8);
+        }
+        const nextPage = () => {
+            page.value++;
+            if (page.value > maxPage.value) {
+                page.value = maxPage.value;
+            }
+            // product.data = allDate.data[route.params.id].slice(8, 10);
+            product.data = allDate.data[route.params.id].slice((page.value-1) * 8, page.value * 8);
+        }
 
         // 用 watch 監控網址
         watch(
@@ -44,6 +72,16 @@ export default {
             // 當router的路徑改變，輸出到畫面的資料也要改變
             product.title = allDate.data["sort"][route.params.id];
             product.data = allDate.data[route.params.id];
+
+            // 當資料超過8筆時，第一頁只顯示前8筆資料
+            if (product.data.length > 8) {
+                // 初始化輸出到畫面的資料
+                product.data = allDate.data[route.params.id].slice(0, 8);
+            }
+            // 回到第一頁
+            page.value = 1;
+            // 最大頁數重新計算
+            maxPage.value = Math.ceil(allDate.data[route.params.id].length / 8);
         }
         );
         watch(locale, (newlocale) => {
@@ -51,9 +89,10 @@ export default {
         });
 
         return { 
-            product, 
+            product, page,
             isLoading,
             goLike, removeLike,
+            prePage, nextPage,
             t, locale,
         };
     }
@@ -89,11 +128,11 @@ export default {
             <ul class="product-box" >
                 <li v-for="(item, idx) in product.data" :key="item.img">
                     <div class="img-box">
-                        <svg  @click="goLike(idx)"
+                        <svg @click="goLike(idx)"
                             xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#b7bdc6" class="bi bi-suit-heart" viewBox="0 0 16 16">
                             <path d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z"/>
                         </svg>
-                        <svg   @click="removeLike(idx)" 
+                        <svg @click="removeLike(idx)" 
                             xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#b7bdc6" class="bi bi-suit-heart-fill" viewBox="0 0 16 16">
                             <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z"/>
                         </svg>
@@ -111,14 +150,14 @@ export default {
 
             <div class="page-wrap" v-show="!isLoading">
                 <ul>
-                    <li class="page-button">
-                        <a href="">&lt;</a>
+                    <li class="page-button" @click="prePage">
+                        <a href="javascript:;">&lt;</a>
                     </li>
                     <li>
-                        <span>1</span>
+                        <span>{{ page }}</span>
                     </li>
-                    <li class="page-button">
-                        <a href="">&gt;</a>
+                    <li class="page-button" @click="nextPage">
+                        <a href="javascript:;">&gt;</a>
                     </li>
                 </ul>
             </div>
@@ -176,7 +215,10 @@ export default {
             margin-left: 300px;
 
             .product-box {
+                max-width: 2150px;
+                padding-left: 0;
                 display: flex;
+                flex-wrap: wrap;
 
                 >li {
                     width: 500px;
@@ -184,13 +226,15 @@ export default {
                 }
                 .img-box {
                     position: relative;
+                    box-sizing: border-box;
                     
                     // 防止連點時發生反白
                     user-select: none;
 
-                    >div {
+                    div {
                         border: 1px solid #e5e5e5;
                         border-radius: 16px;
+                        overflow: hidden;
                     }
                     .bi-suit-heart-fill {
                         display: none;
@@ -200,10 +244,9 @@ export default {
                 .img-box:hover {
                     cursor: pointer;
                     box-shadow: 0 30px 20px -10px #e5e5e5c2;
-                    border-radius: 16px;
 
                     img {
-                        transform: scale(0.95);
+                        transform: scale(1);
                     }
                 }
                 .bi:hover { 
@@ -218,8 +261,11 @@ export default {
                 }
                 img {
                     width: 100%;
+                    transform: scale(1.05);
                     vertical-align: middle;
                     transition: all .5s linear;
+                    position: relative;
+                    z-index: -1;
                 }
                 .content {
                     padding: 20px 0;
@@ -280,19 +326,31 @@ export default {
             height: 40px;
         }
         .container {
+            h1 {
+                padding-bottom: 15px;
+                font-size: 26px;
+            }
+            h4 {
+                font-size: 18px;
+                margin-bottom: 5px;
+            }
             .sidebar {
                 display: none;
             }
             .main-list {
                 margin-left: 0;
 
-                h1 {
-                    padding-bottom: 15px;
-                }
                 .product-box {
+                    max-width: 360px;
                     padding-left: 0;
                     margin: 0;
 
+                    li {
+                        max-width: 180px;
+                        padding: 5px;
+                        margin-right: 0;
+                        position: relative;
+                    }
                     .img-box {
                         svg {
                             top: 10px;
@@ -301,9 +359,35 @@ export default {
                             height: 25px;
                         }
                     }
+                    .content {
+                        height: 35%;
+                        padding-bottom: 0;
+
+                        p {
+                            margin: 0;
+                            font-weight: 300;
+
+                            &:first-child {
+                                margin-top: 5px;
+                            }
+                            &:last-child {
+                                color: blue;
+                                position: absolute;
+                                bottom: 5px;
+                                right: 5px;
+                            }
+                        }
+                    }
                 }
                 .page-wrap {
-                    margin: 0px 0 25px 0;
+                    display: none;
+                    // margin: 0;
+
+                    // ul {
+                    //     padding-left: 0;
+                    //     margin: 10px 0;
+                    //     transform: translateX(0);
+                    // }
                 }
                 .loading {
                     height: 250px;
