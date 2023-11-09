@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import NotFoundComponent from '../views/NotFoundComponent.vue'
 
-import Course from '../views/Course/index.vue'
 import Guide from '../views/About/Guide.vue'
 import Changelog from '../views/About/Changelog.vue'
 import Github from '../views/About/Github.vue'
@@ -43,6 +42,10 @@ const routes = [
     component: () => import('../components/Product.vue'),
   },
   {
+    path: '/product_detail/:pid',
+    component: () => import('../components/Product_Detail.vue'),
+  },
+  {
     // 聯絡我們
     path: '/contact',
     name: 'contact',
@@ -80,16 +83,6 @@ const routes = [
         component: Reference,
       },
     ]
-  },
-  {
-    path: '/course',
-    name: 'course',
-    component: Course
-  },
-  {
-    path: '/course/:id',
-    name: 'course_id',
-    component: () => import('../views/Course/_id.vue')
   },
   { path: '/:pathMatch(.*)', component: NotFoundComponent }
 ]

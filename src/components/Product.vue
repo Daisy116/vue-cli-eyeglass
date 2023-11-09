@@ -17,37 +17,38 @@ export default {
         const maxPage = ref(1);
 
         onMounted(() => {
-            axios.get(`https://run.mocky.io/v3/10b6e5c4-0d7d-473f-8858-b6be7f5c3094`)
+            axios.get(`https://run.mocky.io/v3/7e69c6fc-8f63-4e22-8087-61901e7922aa`)
             .then(res => {
-                setTimeout(()=> {
+                // 初始化輸出到畫面的資料
+                product.data = res.data[route.params.id];
+                product.title = res.data["sort"][route.params.id];
+                // 儲存原始資料，在watch時使用
+                allDate.data = res.data;
+
+                // 當資料超過8筆時，第一頁只顯示前8筆資料
+                if (res.data[route.params.id].length > 8 && screen.width > 490) {
                     // 初始化輸出到畫面的資料
-                    product.data = res.data[route.params.id];
-                    product.title = res.data["sort"][route.params.id];
-                    // 儲存原始資料，在watch時使用
-                    allDate.data = res.data;
+                    product.data = res.data[route.params.id].slice(0, 8);
+                    // 一頁放8筆資料
+                    maxPage.value = Math.ceil(allDate.data[route.params.id].length / 8);
+                }
 
-                    // 當資料超過8筆時，第一頁只顯示前8筆資料
-                    if (res.data[route.params.id].length > 8 && screen.width > 490) {
-                        // 初始化輸出到畫面的資料
-                        product.data = res.data[route.params.id].slice(0, 8);
-                        // 一頁放8筆資料
-                        maxPage.value = Math.ceil(allDate.data[route.params.id].length / 8);
-                    }
-
-                    // 將loading動畫關掉
-                    isLoading.value = !isLoading.value;
-                }, 1000);
+                // 將loading動畫關掉
+                isLoading.value = !isLoading.value;
             })
         });
 
+        // 點擊愛心
         const goLike = (idx) => {
             let styles = $(".bi-suit-heart-fill")[idx].style;
             styles.setProperty("display", "block");
         }
+        // 移除愛心
         const removeLike = (idx) => {
             let styles = $(".bi-suit-heart-fill")[idx].style;
             styles.removeProperty("display");
         }
+        // 點擊上一頁
         const prePage = () => {
             page.value--;
             if (page.value < 1) {
@@ -56,6 +57,7 @@ export default {
             // product.data = allDate.data[route.params.id].slice(0, 8);
             product.data = allDate.data[route.params.id].slice(page.value - 1, page.value * 8);
         }
+        // 點擊下一頁
         const nextPage = () => {
             page.value++;
             if (page.value > maxPage.value) {
@@ -89,7 +91,7 @@ export default {
         });
 
         return { 
-            product, page,
+            product, page, maxPage,
             isLoading,
             goLike, removeLike,
             prePage, nextPage,
@@ -136,9 +138,9 @@ export default {
                             xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#b7bdc6" class="bi bi-suit-heart-fill" viewBox="0 0 16 16">
                             <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z"/>
                         </svg>
-                        <div>
+                        <router-link :to="`/product_detail/${item.PID}`">
                             <img :src="require(`../assets/images/${item.img}`)">
-                        </div>
+                        </router-link>
                     </div>
                     <div class="content">
                         <h4>{{ item.title }}</h4>
@@ -159,6 +161,7 @@ export default {
                     <li class="page-button" @click="nextPage">
                         <a href="javascript:;">&gt;</a>
                     </li>
+                    <span class="max-page">(共 {{ maxPage }} 頁)</span>
                 </ul>
             </div>
         </div>
@@ -236,6 +239,10 @@ export default {
                         border-radius: 16px;
                         overflow: hidden;
                     }
+                    a {
+                        display: block;
+                        height: 100%;
+                    }
                     .bi-suit-heart-fill {
                         display: none;
                         fill: red;
@@ -243,7 +250,8 @@ export default {
                 }
                 .img-box:hover {
                     cursor: pointer;
-                    box-shadow: 0 30px 20px -10px #e5e5e5c2;
+                    box-shadow: 20px 20px 20px rgba(229, 229, 229, 0.7607843137), 
+                                -20px -20px 20px rgba(229, 229, 229, 0.7607843137);
 
                     img {
                         transform: scale(1);
@@ -285,12 +293,14 @@ export default {
                 >ul {
                     display: flex;
                     justify-content: center;
+                    align-items: center;
                     transform: translateX(-300px);
 
                     >li {
                         width: 40px;
                         height: 40px;
                         line-height: 40px;
+                        cursor: pointer;
 
                         a {
                             color: black;
@@ -298,6 +308,12 @@ export default {
                         span {
                             color: red;
                         }
+                    }
+                    .max-page {
+                        position: absolute;
+                        top: 90%;
+                        font-size: 16px;
+                        opacity: .5;
                     }
                     .page-button:hover {
                         background-color: #e9ecef;
@@ -380,6 +396,7 @@ export default {
                     }
                 }
                 .page-wrap {
+                    // 手機版不要有分頁，全部放同一頁(一直往下拉)
                     display: none;
                     // margin: 0;
 
