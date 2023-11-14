@@ -134,7 +134,7 @@ export default {
 
         <ul class="pc-login" v-show="isSearch">
             <li>
-                <a href="#">{{ t("navbar-login") }}</a>
+				<router-link to="/login">{{ t("navbar-login") }}</router-link>
             </li>
             <li class="language">
 				<select v-model="locale">
@@ -241,6 +241,9 @@ export default {
 					</div>
 				</li>
 			</ul>
+			<router-link to="/login" @click="closeCollapse" class="login">
+				登入／註冊
+			</router-link>
 			</div>
 		</div>
 	</nav>
@@ -254,7 +257,6 @@ export default {
 	// 手機版
 	@media screen and (min-width: 0px) and (max-width: 490px) {
 		.navbar {
-			
 			.container-fluid {
 				padding: 10px 12px;
 				background-color: #fff;
@@ -263,7 +265,6 @@ export default {
 				position: fixed;
 				top: 0;
 				left: 0;
-				// right: 0;
 				z-index: 99;
 			}
 			img {
@@ -321,9 +322,28 @@ export default {
 				}
 			}
 		}
-		
 		.header {
 			display: none;
+		}
+		.login {
+			display: block;
+			width: 100%;
+			line-height: 44px;
+			margin-top: 10px;
+			border-radius: 16px;
+			border: none;
+			background-color: black;
+			color: white;
+			text-align: center;
+		}
+	}
+
+	@media screen and (min-width: 769px) and (max-width: 1500px) {
+		a {
+			margin: auto;
+		}
+		.logo-image {
+			max-height: 54px;
 		}
 	}
 

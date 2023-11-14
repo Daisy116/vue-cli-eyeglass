@@ -1,20 +1,27 @@
 <script>
 import { watch } from 'vue';
 import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
   setup() {
     const { t, locale } = useI18n();
+	const router = useRouter();
 
 	const goTab = (str) => {
-		let string = "#" + str;
-		// 用offset()抓取該區塊的位置
-		let top = $(string).offset().top;
+		router.push('/about');
+		
+		setTimeout(()=>{
+			let string = "#" + str;
+			// 用offset()抓取該區塊的位置
+			let top = $(string).offset().top;
 
-		// 因為最上面有84px的navbar，所以要扣掉 84！
-		top = top - 84;
-		// 當滾輪在下方，頁面會從下往上...
-		$("html, body").animate({scrollTop: top}, 100);
+			// 因為最上面有84px的navbar，所以要扣掉 84！
+			top = top - 84;
+			// 當滾輪在下方，頁面會從下往上...
+			$("html, body").animate({scrollTop: top}, 100);
+		}, 700);
+
 	}
 
     watch(locale, (newlocale) => {
@@ -38,13 +45,13 @@ export default {
                     <li>
                         <h4>{{ t("footer-about") }}</h4>
                         <p>
-							<router-link @click.enter="goTab('about1')" to="/about">{{ t("footer-about1") }}</router-link>
+							<a @click="goTab('about1')">{{ t("footer-about1") }}</a>
 						</p>
                         <p>
-							<router-link @click.enter="goTab('about2')" to="/about">{{ t("footer-about2") }}</router-link>
+							<a @click="goTab('about2')">{{ t("footer-about2") }}</a>
 						</p>
                         <p>
-							<router-link @click.enter="goTab('about3')" to="/about">{{ t("footer-about3") }}</router-link>
+							<a @click="goTab('about3')">{{ t("footer-about3") }}</a>
 						</p>
                         <p>
 							<router-link to="/location">{{ t("footer-about4") }}</router-link>

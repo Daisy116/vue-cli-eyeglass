@@ -1,107 +1,227 @@
 <script>
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 
 // 引入驗證表單內容的JS函式(使用正則表達式)
-import { reg_name, reg_phoneType2, reg_email } from "@/lib/validate.js"
+import { reg_name, reg_phoneType2, reg_email } from "@/lib/validate.js";
+// 引入圖形驗證碼的JS函式
+import { createCode } from "@/lib/jQueryfn";
 
 export default {
     setup() {
         const myForm = ref();
+        
+        // 表單內容是否全部驗證通過
+        const isOK = reactive({
+            name: false,
+            tel: false,
+            email: false,
+            country: false,
+            contents: false,
+            verify: false
+        });
+        const OK = ref(false);
+        
+        let msgName = null;
         const formData = reactive({
             name: "",
             tel: "",
             email: "",
-            country: "所在區域",
+            country: "",
             contents: ""
         });
-        const isOK = ref(false);
         
-        const submit = (e) => {
-            e.preventDefault();
-            const form = document.querySelectorAll("form")[1];
-            const msgName = document.querySelectorAll(".errorMsg");
-            const msgNamePhone = document.querySelectorAll(".errorMsgPhone");
+        
+        // 驗證碼設定長度為5位數
+        onMounted(() => {
+            msgName = document.querySelectorAll(".errorMsg");
             
-            let checkName = reg_name(formData.name);
-            let checkTel = reg_phoneType2(formData.tel);
-            let checkEmail = reg_email(formData.email);
-            let checkCountry = false;
-            let checkContents= false;
+            $('.code').createCode({
+                len: 5
+            });
+        });
 
-            // 驗證表單的必填欄位是否有填      
-            if (form.reportValidity()) {}
-            // 驗證表單的姓名
-            if (!checkName) {
-                document.querySelector("input[name='Name']").classList.add("error");
-                msgName[0].classList.add("error");
-                msgNamePhone[0].classList.add("error");
-            } else {
-                document.querySelector("input[name='Name']").classList.remove("error");
-                msgName[0].classList.remove("error");
-                msgNamePhone[0].classList.remove("error");
-            }
-            // 驗證表單的手機號碼
-            if (!checkTel) {
-                document.querySelector("input[name='Tel']").classList.add("error");
-                msgName[1].classList.add("error");
-                msgNamePhone[1].classList.add("error");
-            } else {
-                document.querySelector("input[name='Tel']").classList.remove("error");
-                msgName[1].classList.remove("error");
-                msgNamePhone[1].classList.remove("error");
-            }
-            // 驗證表單的信箱
-            if (!checkEmail) {
-                document.querySelector("input[name='Email']").classList.add("error");
-                msgName[2].classList.add("error");
-                msgNamePhone[2].classList.add("error");
-            } else {
-                document.querySelector("input[name='Email']").classList.remove("error");
-                msgName[2].classList.remove("error");
-                msgNamePhone[2].classList.remove("error");
-            }
+
+        // @click 點擊送出按鈕
+        const submit = (e) => {
+            const form = document.querySelectorAll("form")[1];
+
+            e.preventDefault();
+            if (form.reportValidity()) {} // 驗證表單的必填欄位是否有填
+
+            nameBlur();
+            telBlur();
+            emailBlur();
+            contentBlur();
+            verifyBlur();
+
             // 驗證表單的區域
-            if (formData.country == "所在區域") {
+            if (formData.country == "") {
                 document.querySelector("select[name='Country']").classList.add("error");
                 msgName[3].classList.add("error");
-                msgNamePhone[3].classList.add("error");
-                checkCountry = false;
+                isOK.country = false;
             } else {
                 document.querySelector("select[name='Country']").classList.remove("error");
                 msgName[3].classList.remove("error");
-                msgNamePhone[3].classList.remove("error");
-                checkCountry = true;
+                isOK.country = true;
             }
-            // 驗證表單的洽談事項
-            if (formData.contents == "") {
-                document.querySelector("textarea").classList.add("error");
-                msgName[4].classList.add("error");
-                msgNamePhone[4].classList.add("error");
-                checkContents = false;
-            } else {
-                document.querySelector("textarea").classList.remove("error");
-                msgName[4].classList.remove("error");
-                msgNamePhone[4].classList.remove("error");
-                checkContents = true;
-            }
-            if (checkName && checkTel && checkEmail && checkCountry && checkContents) {
-                console.log("表單資料：", formData);
-                isOK.value = true;
+            
+            // 總驗證
+            if (!Object.values(isOK).includes(false)) {
+                OK.value = true;
             }
         };
+        // @click 點擊重新填寫按鈕
         const resetForm = () => {
             myForm.value.reset();
-            formData.name = "";
-            formData.tel = "";
-            formData.email = "";
-            formData.country = "所在區域";
-            formData.contents = "";
+            for (let key in formData) {
+                formData[key] = "";
+            }
+            for (let i = 0; i < myForm.value.length; i++) {
+                myForm.value[i].classList.remove("error")
+            }
+            for (let j = 0; j < msgName.length; j++) {
+                msgName[j].classList.remove("error");
+            }
+        }
+        
+
+        // @blur 當輸入框失去焦點觸發驗證
+        const nameBlur = () => {
+            const input = document.querySelector("input[name='Name']");
+
+            // 驗證是否為空值
+            if (input.value == "") {
+                input.classList.add("error");
+                msgName[0].innerText = "* 不得為空";
+                msgName[0].classList.add("error");
+                isOK.name = false;
+                return;
+            }
+            // 驗證內容是否正確
+            if (!reg_name(formData.name)) {
+                input.classList.add("error");
+                msgName[0].innerText = "* 請輸入2~4個中文字";
+                msgName[0].classList.add("error");
+                isOK.name = false;
+                return;
+            }
+            input.classList.remove("error");
+            msgName[0].classList.remove("error");
+            isOK.name = true;
+        }
+        const telBlur = () => {
+            const input = document.querySelector("input[name='Tel']");
+
+            // 驗證是否為空值
+            if (input.value == "") {
+                input.classList.add("error");
+                msgName[1].innerText = "* 不得為空";
+                msgName[1].classList.add("error");
+                isOK.tel = false;
+                return;
+            }
+            // 驗證長度
+            if (input.value.split('').length > 10) {
+                input.classList.add("error");
+                msgName[1].innerText = "* 長度不得超過10位數";
+                msgName[1].classList.add("error");
+                isOK.tel = false;
+                return;
+            }
+            // 驗證內容是否正確
+            if (!reg_phoneType2(formData.tel)) {
+                input.classList.add("error");
+                msgName[1].innerText = "* 請輸入10位數字，且開頭為0";
+                msgName[1].classList.add("error");
+                isOK.tel = false;
+                return;
+            }
+            input.classList.remove("error");
+            msgName[1].classList.remove("error");
+            isOK.tel = true;
+        }
+        const emailBlur = () => {
+            const input = document.querySelector("input[name='Email']");
+
+            // 驗證是否為空值
+            if (input.value == "") {
+                input.classList.add("error");
+                msgName[2].innerText = "* 不得為空";
+                msgName[2].classList.add("error");
+                isOK.email = false;
+                return;
+            }
+            // 驗證內容是否正確
+            if (!reg_email(formData.email)) {
+                input.classList.add("error");
+                msgName[2].innerText = "* 電子信箱格式不符！";
+                msgName[2].classList.add("error");
+                isOK.email = false;
+                return;
+            }
+            input.classList.remove("error");
+            msgName[2].classList.remove("error");
+            isOK.email = true;
+        }
+        const countryBlur = () => {
+            const input = document.querySelector("select[name='Country']");
+
+            if (formData.country == "") {
+                input.classList.add("error");
+                msgName[3].classList.add("error");
+                isOK.country = false;
+            } else {
+                input.classList.remove("error");
+                msgName[3].classList.remove("error");
+                isOK.country = true;
+            }
+        }
+        const contentBlur = () => {
+            const text = document.querySelector("textarea");
+
+            // 驗證是否為空值
+            if (text.value == "") {
+                text.classList.add("error");
+                msgName[4].innerText = "* 不得為空";
+                msgName[4].classList.add("error");
+                isOK.contents = false;
+                return;
+            }
+            text.classList.remove("error");
+            msgName[4].classList.remove("error");
+            isOK.contents = true;
+        }
+        const verifyBlur = () => {
+            const input = document.querySelector("input[name='Verify']");
+            // console.log("目前輸入", input.value);
+            // console.log("驗證碼", $('.code').children('input').val());
+
+            // 驗證是否為空值
+            if (input.value == "") {
+                input.classList.add("error");
+                msgName[5].innerText = "* 不得為空";
+                msgName[5].classList.add("error");
+                isOK.verify = false;
+                return;
+            }
+            // 驗證內容是否正確
+            if (input.value.toLowerCase() != $('.code').children('input').val().toLowerCase()) {
+                input.classList.add("error");
+                msgName[5].innerText = "* 驗證碼輸入錯誤！";
+                msgName[5].classList.add("error");
+                isOK.verify = false;
+                return;
+            }
+            input.classList.remove("error");
+            msgName[5].classList.remove("error");
+            isOK.verify = true;
         }
 
         return {
             formData, myForm,
-            submit, resetForm,
-            isOK
+            submit, resetForm, 
+            nameBlur, telBlur, emailBlur, countryBlur, contentBlur, verifyBlur,
+            OK
         };
     }
 }
@@ -120,40 +240,28 @@ export default {
             </div>
             <p>如有任何疑問請隨時與我們聯繫</p>
         </div>
-        <div v-show="!isOK" class="form-wrap">
+        <div v-show="!OK" class="form-wrap">
             <form ref="myForm">
                 <!-- 姓名 -->
                 <div class="error-wrap">
                     <span class="errorMsg">* 請輸入2~4個中文字</span>
                     <span class="errorMsg errorMsg-right">* 請輸入10位數字，且開頭為0</span>
                 </div>
-                <div class="phone-error">
-                    <span class="errorMsgPhone">* 請輸入2~4個中文字</span>
-                </div>
-                <input type="text" name="Name" v-model="formData.name" placeholder="姓名" required>
+                <input @blur="nameBlur" type="text" name="Name" v-model="formData.name" placeholder="姓名" required>
 
                 <!-- 手機號碼 -->
-                <div class="phone-error">
-                    <span class="errorMsgPhone">* 請輸入10位數字，且開頭為0</span>
-                </div>
-                <input type="phone" name="Tel" v-model="formData.tel" placeholder="手機號碼" required>
+                <input @blur="telBlur" type="phone" name="Tel" v-model="formData.tel" placeholder="手機號碼" required>
 
                 <!-- 電子信箱 -->
                 <div class="error-wrap">
                     <span class="errorMsg">* 電子信箱格式不符！</span>
                     <span class="errorMsg errorMsg-right">* 請選擇所在區域</span>
                 </div>
-                <div class="phone-error">
-                    <span class="errorMsgPhone">* 電子信箱格式不符！</span>
-                </div>
-                <input type="email" name="Email" v-model="formData.email" placeholder="電子信箱">
+                <input @blur="emailBlur" type="email" name="Email" v-model="formData.email" placeholder="電子信箱">
 
                 <!-- 所在區域 -->
-                <div class="phone-error">
-                    <span class="errorMsgPhone">* 請選擇所在區域</span>
-                </div>
-                <select name="Country" v-model="formData.country">
-                    <option value="所在區域">所在區域</option>
+                <select @blur="countryBlur" name="Country" v-model="formData.country">
+                    <option value="" selected>所在區域</option>
                     <option value="台北市">台北市</option>
                     <option value="基隆市">基隆市</option>
                     <option value="新北市">新北市</option>                    
@@ -180,11 +288,14 @@ export default {
                 <div class="error-wrap">
                     <span class="errorMsg">* 請輸入內容！</span>
                 </div>
-                <div class="phone-error">
-                    <span class="errorMsgPhone">* 請輸入內容！</span>
+                <textarea @blur="contentBlur" name="Contents" id="contents" v-model.trim="formData.contents" cols="30" rows="10" placeholder="洽詢事項" required></textarea>
+                
+                <!-- 圖形驗證 -->
+                <div class="error-wrap">
+                    <span class="errorMsg">* 驗證碼內容錯誤！</span>
                 </div>
-                <textarea name="Contents" id="contents" v-model.trim="formData.contents" cols="30" rows="10" placeholder="洽詢事項" required></textarea>
-                <!-- <input type="text" name="authcode" placeholder="驗證碼"> -->
+                <input @blur="verifyBlur" type="text" name="Verify" class="input-code" placeholder="驗證碼">
+                <span class="code" title='點擊切換'></span>
                 
             </form>
             <div class="btn-wrap">
@@ -198,7 +309,7 @@ export default {
                 <button @click="submit">送出</button>
             </div>
         </div>
-        <div v-show="isOK" class="response-wrap">
+        <div v-show="OK" class="response-wrap">
             <h2>感謝填寫，請在7個工作天內確認您的信箱！</h2>
         </div>
     </div>
@@ -248,7 +359,7 @@ export default {
             input, select {
                 width: 49%;
                 height: 44px;
-                margin-bottom: 24px;
+                margin-bottom: 18px;
                 padding: 0 16px;
                 border: 1px solid #707a8a;
                 border-radius: 16px;
@@ -267,11 +378,14 @@ export default {
             textarea {
                 width: 100%;
                 height: 100px;
-                margin-bottom: 24px;
+                margin-bottom: 16px;
                 padding: 14px 16px;
                 border-radius: 16px;
                 outline: none;
                 color: #707a8a;
+            }
+            .input-code {
+                margin-right: 10px;
             }
             .btn-wrap {
                 text-align: right;
@@ -320,6 +434,7 @@ export default {
                 }
                 .errorMsg-right {
                     position: absolute;
+                    padding: 0 10px;
                     left: 50%;
                     bottom: 0;
                 }
@@ -328,10 +443,10 @@ export default {
                     width: 50%;
                     border: none;
 
+                    // scss用text-wrap會報錯，所以改用white-space
+                    // text-wrap: nowrap;
+                    white-space: nowrap;
                 }
-            }
-            .phone-error {
-                display: none;
             }
         }
         .response-wrap {
@@ -367,7 +482,7 @@ export default {
                 }
             }
             .form-wrap {
-                margin: 20px 0;
+                margin: 25px 0;
                 
                 input, select {
                     width: 100%;
@@ -375,34 +490,18 @@ export default {
                 }
                 input[name="Tel"],select[name="Country"] {
                     margin-left: 0;
+                    margin-bottom: 18px;
                 }
                 textarea {
                     margin-bottom: 15px;
                 }
-                .error-wrap {
-                    display: none;
+                .input-code {
+                    width: 40%;
                 }
-                .phone-error {
-                    display: block;
-                    color: red;
-                    text-indent: .5rem;
-                    position: relative;
-                    
-                    span {
-                        border: none;
-                        font-size: 14px;
-                    }
-                    .errorMsgPhone {
-                        display: none;
-                        color: red;
-                        position: absolute;
-                        left: 0;
-                        bottom: -2px;
-                    }
-                    .errorMsgPhone.error {
-                        display: inline-block;
-                        width: 100%;
-                        border: none;
+                .error-wrap {
+                    .errorMsg-right {
+                        padding: 0;
+                        transform: translate(-100%, 70px);
                     }
                 }
                 .btn-wrap {

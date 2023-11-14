@@ -58,6 +58,12 @@ const routes = [
     component: () => import('../views/FAQView.vue'),
   },
   {
+    // 登入註冊
+    path: '/login',
+    name: 'login',
+    component: () => import('../views/LoginView.vue'),
+  },
+  {
     path: '/about1',
     name: 'about',
     component: () => import('../views/AboutView.vue'),

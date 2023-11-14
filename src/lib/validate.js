@@ -10,9 +10,6 @@ export const reg_phoneType2 = (val) => {
     return validate.test(val)
 }
 
-
-
-
 // Email
 // 英文字開頭，不可由數字起始。可以接受「.」「-」和「_」
 // 需要有@，且@後面由「.」連接英文字，沒有數字、符號
@@ -22,6 +19,14 @@ export const reg_email = (val) => {
     const validate = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/
     return validate.test(val)
 }
+
+// 中低強度的密碼，只能包含數字、字母、下底線，6~18碼
+export const reg_pwdCommon = (val) => {
+    const validate = /^[a-zA-Z][a-zA-Z0-9_]{5,16}$/
+    return validate.test(val)
+}
+
+
 
 
 // URL
@@ -56,12 +61,6 @@ export const reg_phoneType3 = (val) => {
   
 // 帳號是否合法 (字母開頭，允許下底線，6~16碼)
 export const reg_account = (val) => {
-    const validate = /^[a-zA-Z][a-zA-Z0-9_]{5,16}$/
-    return validate.test(val)
-}
-  
-// 中低強度的密碼，只能包含數字、字母、下底線，6~18碼
-export const reg_pwdCommon = (val) => {
     const validate = /^[a-zA-Z][a-zA-Z0-9_]{5,16}$/
     return validate.test(val)
 }
