@@ -1,10 +1,10 @@
-const { defineConfig } = require('@vue/cli-service')
+// const { defineConfig } = require('@vue/cli-service')
 const webpack = require('webpack');
 const IconFontPlugin = require('icon-font-loader').Plugin;
 
-module.exports = defineConfig({
-  transpileDependencies: true
-})
+// module.exports = defineConfig({
+//   transpileDependencies: true
+// })
 
 module.exports = {
   // publicPath: './',

@@ -144,12 +144,12 @@ export default {
 
             li {
                 width: calc(100% / 3);
-                padding: 10px;
                 text-align: center;
                 border-bottom: 1px solid #e5e5e5;
 
                 a {
                     display: block;
+                    padding-bottom: 10px;
                 }
             }
             li:hover {
@@ -203,6 +203,7 @@ export default {
         }
         .home-btn {
             width: 100%;
+            margin-bottom: 30px;
             display: flex;
             justify-content: center;
 

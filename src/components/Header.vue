@@ -101,7 +101,7 @@ export default {
             </li>
             <li>
                 <span>
-					<router-link to="/NotFound404">{{ t("navbar-mall") }}</router-link>
+					<router-link to="/shopping_mall">{{ t("navbar-mall") }}</router-link>
 				</span>
             </li>
             <li>
@@ -127,7 +127,7 @@ export default {
             <li>
                 <span>{{ t("navbar-glasses") }}</span>
                 <div class="li-box">
-                    <router-link to="/NotFound404" class="dropdown-item">Young Man X Ti Glasses</router-link>
+                    <router-link to="/product/E0001" class="dropdown-item">{{ t("navbar-glasses1") }}</router-link>
                 </div>
             </li>
         </ul>
@@ -204,7 +204,7 @@ export default {
 					</div>
 				</li>
 				<li class="nav-item">
-					<router-link to="/NotFound404" @click="closeCollapse" class="nav-link">{{ t("navbar-mall") }}</router-link>
+					<router-link to="/shopping_mall" @click="closeCollapse" class="nav-link">{{ t("navbar-mall") }}</router-link>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#collapseBox2" role="button" aria-expanded="false" aria-controls="collapseExample">
@@ -236,7 +236,7 @@ export default {
 					</a>
 					<div class="collapse" id="collapseBox3">
 						<span>
-							<router-link to="/NotFound404" class="dropdown-item">Young Man X Ti Glasses</router-link>
+							<router-link to="/product/E0001" @click="closeCollapse" class="dropdown-item">{{ t("navbar-glasses1") }}</router-link>
 						</span>
 					</div>
 				</li>

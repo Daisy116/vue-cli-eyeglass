@@ -42,9 +42,18 @@ const routes = [
     component: () => import('../components/Product.vue'),
   },
   {
+    // 點擊產品的詳細內頁
     path: '/product_detail/:pid',
     component: () => import('../components/Product_Detail.vue'),
   },
+  {
+    // 點擊產品的詳細內頁
+    path: '/shopping_mall',
+    component: () => import('../views/ShoppingMallView.vue'),
+  },
+
+
+
   {
     // 聯絡我們
     path: '/contact',

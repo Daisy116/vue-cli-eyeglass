@@ -100,7 +100,9 @@ export default {
         </div>
     </footer>
 	<div class="copyright">
-        <div>&copy;年青人眼鏡</div>
+        <div>
+			&copy;年青人眼鏡
+		</div>
         <div>
             <a href="">{{ t("footer-bottom1") }}</a>
             <a href="">{{ t("footer-bottom2") }}</a>
@@ -112,10 +114,13 @@ export default {
 	.footer {
 		display: flex;
 		justify-content: space-between;
+		position: relative;
+		z-index: 101;
+		background-color: white;
 
 		width: 100%;
 		max-width: 1500px;
-		margin: 50px auto 0px auto;
+		margin: 0 auto;
 		padding: 50px 0;
 
 		border-top: 1px solid #e5e5e5;
@@ -147,7 +152,9 @@ export default {
 				}
 			}
 		}
-
+		p {
+			margin-bottom: 0;
+		}
 		.logo-image {
 			height: 64px;
 		}
@@ -179,10 +186,12 @@ export default {
 		width: 100%;
 		max-width: 1500px;
 		margin: auto;
-		margin: 20px auto;
-
+		padding: 20px;
 		color: #707a8a;
 
+		position: relative;
+		z-index: 101;
+		background-color: white;
 		a {
 			color: #707a8a;
 		}

@@ -17,7 +17,8 @@ export default {
         const maxPage = ref(1);
 
         onMounted(() => {
-            axios.get(`https://run.mocky.io/v3/7e69c6fc-8f63-4e22-8087-61901e7922aa`)
+            axios.get(`https://run.mocky.io/v3/316138d0-16b6-441e-82e5-7bc2c8472ec7`)
+            // https://run.mocky.io/v3/7e69c6fc-8f63-4e22-8087-61901e7922aa
             .then(res => {
                 // 初始化輸出到畫面的資料
                 product.data = res.data[route.params.id];
@@ -25,12 +26,19 @@ export default {
                 // 儲存原始資料，在watch時使用
                 allDate.data = res.data;
 
-                // 當資料超過8筆時，第一頁只顯示前8筆資料
-                if (res.data[route.params.id].length > 8 && screen.width > 490) {
-                    // 初始化輸出到畫面的資料
-                    product.data = res.data[route.params.id].slice(0, 8);
-                    // 一頁放8筆資料
-                    maxPage.value = Math.ceil(allDate.data[route.params.id].length / 8);
+                // 當資料超過9筆、且PC版時，第一頁只顯示前8筆資料
+                if (res.data[route.params.id].length > 9 && screen.width > 490) {
+                    product.filterData = [];
+                    for (let i = 0; i < res.data[route.params.id].length; i+=9) {
+                        product.filterData.push(res.data[route.params.id].slice(i, i+9))
+                    }
+                    product.data = product.filterData[0];
+
+                    // 總共有幾頁
+                    maxPage.value = product.filterData.length;
+                } else {
+                    product.filterData = [];
+                    product.filterData.push(allDate.data[route.params.id]);
                 }
 
                 // 將loading動畫關掉
@@ -54,8 +62,8 @@ export default {
             if (page.value < 1) {
                 page.value = 1;
             }
-            // product.data = allDate.data[route.params.id].slice(0, 8);
-            product.data = allDate.data[route.params.id].slice(page.value - 1, page.value * 8);
+
+            product.data = product.filterData[page.value - 1];
         }
         // 點擊下一頁
         const nextPage = () => {
@@ -63,8 +71,8 @@ export default {
             if (page.value > maxPage.value) {
                 page.value = maxPage.value;
             }
-            // product.data = allDate.data[route.params.id].slice(8, 10);
-            product.data = allDate.data[route.params.id].slice((page.value-1) * 8, page.value * 8);
+            
+            product.data = product.filterData[page.value - 1];
         }
 
         // 用 watch 監控網址
@@ -75,15 +83,21 @@ export default {
             product.title = allDate.data["sort"][route.params.id];
             product.data = allDate.data[route.params.id];
 
-            // 當資料超過8筆時，第一頁只顯示前8筆資料
-            if (product.data.length > 8) {
-                // 初始化輸出到畫面的資料
-                product.data = allDate.data[route.params.id].slice(0, 8);
+            // 當資料超過8筆時，第一頁只顯示前9筆資料
+            if (product.data.length > 9) {
+                product.filterData = [];
+                for (let i = 0; i < allDate.data[route.params.id].length; i+=9) {
+                    product.filterData.push(allDate.data[route.params.id].slice(i, i+9))
+                }
+                product.data = product.filterData[0];
+
+                // 總共有幾頁
+                maxPage.value = product.filterData.length;
+            } else {
+                maxPage.value = 1;
             }
             // 回到第一頁
             page.value = 1;
-            // 最大頁數重新計算
-            maxPage.value = Math.ceil(allDate.data[route.params.id].length / 8);
         }
         );
         watch(locale, (newlocale) => {
@@ -116,6 +130,12 @@ export default {
                     <router-link to="/product/F0002">{{ t("footer-health2") }}</router-link>
                 </li>
             </ul>
+            <h3>{{ t("navbar-glasses") }}</h3>
+            <ul>
+                <li>
+                    <router-link to="/product/E0001">{{ t("navbar-glasses1") }}</router-link>
+                </li>
+            </ul>
         </div>
         <!-- 右側PC產品列表 -->
         <div class="main-list">
@@ -128,7 +148,7 @@ export default {
 
             <h1>{{ product.title }}</h1>
             <ul class="product-box" >
-                <li v-for="(item, idx) in product.data" :key="item.img">
+                <li v-for="(item, idx) in product.data" :key="item.PID">
                     <div class="img-box">
                         <svg @click="goLike(idx)"
                             xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#b7bdc6" class="bi bi-suit-heart" viewBox="0 0 16 16">
@@ -144,8 +164,10 @@ export default {
                     </div>
                     <div class="content">
                         <h4>{{ item.title }}</h4>
-                        <p>{{ item.amount }}</p>
-                        <p>{{ item.price }}</p>
+                        <p>
+                            <span>{{ item.amount }}</span>
+                            <span>{{ item.price }}</span>
+                        </p>
                     </div>
                 </li>
             </ul>
@@ -178,10 +200,12 @@ export default {
         margin-right: 0;
         margin-left: 0;
         padding: 0 15px;
+        display: flex;
 
         h1 {
             font-size: 32px;
             font-weight: 700;
+            margin-left: 10px;
             padding: 30px 0;
         }
         h3 {
@@ -196,16 +220,26 @@ export default {
         }
         .sidebar {
             width: 300px;
+            height: 100vh;
             padding: 30px 20px;
-            position: absolute;
-            left: 0;
+            box-shadow: 10px 0px 10px -5px rgba(0, 0, 0, 0.3);
+
+            position: fixed;
+            z-index: 90;
+            top: 84px;
+            transform: translateX(-15px);
 
             >ul {
                 margin-top: 10px;
 
                 a {
+                    display: block;
+                    width: 90%;
                     color: black;
                     font-size: 18px;
+                    &:hover {
+                        text-shadow: 3px 3px 3px rgb(206 198 102);
+                    }
                 }
                 a.router-link-active {
                     color: rgb(255, 145, 0);
@@ -221,11 +255,12 @@ export default {
                 max-width: 2150px;
                 padding-left: 0;
                 display: flex;
+                justify-content: space-between;
                 flex-wrap: wrap;
 
                 >li {
                     width: 500px;
-                    margin-right: 35px;
+                    width: calc(100% / 3 - 24px);
                 }
                 .img-box {
                     position: relative;
@@ -276,11 +311,18 @@ export default {
                     z-index: -1;
                 }
                 .content {
-                    padding: 20px 0;
+                    padding: 20px;
                     font-weight: bolder;
 
-                    p {
-                        margin-bottom: 8px;
+                    p span{
+                        margin: 0;
+                        font-weight: 300;
+
+                        &:last-child {
+                            font-size: 18px;
+                            color: blue;
+                            display: block;
+                        }
                     }
                 }
             }
@@ -294,7 +336,7 @@ export default {
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    transform: translateX(-300px);
+                    padding-left: 0;
 
                     >li {
                         width: 40px;
@@ -310,8 +352,6 @@ export default {
                         }
                     }
                     .max-page {
-                        position: absolute;
-                        top: 90%;
                         font-size: 16px;
                         opacity: .5;
                     }
@@ -325,12 +365,11 @@ export default {
                 }
             }
             .loading {
+                display:block;
                 max-height: 800px;
                 margin: 0 auto;
                 padding: 200px 0;
-                transform: translateX(-300px);
                 background:#fff;
-                display:block;
             }
         }
     }
@@ -347,6 +386,7 @@ export default {
                 font-size: 26px;
             }
             h4 {
+                min-height: 43px;
                 font-size: 18px;
                 margin-bottom: 5px;
             }
@@ -362,6 +402,7 @@ export default {
                     margin: 0;
 
                     li {
+                        width: 500px;
                         max-width: 180px;
                         padding: 5px;
                         margin-right: 0;
@@ -379,18 +420,14 @@ export default {
                         height: 35%;
                         padding-bottom: 0;
 
-                        p {
+                        p span{
                             margin: 0;
                             font-weight: 300;
 
-                            &:first-child {
-                                margin-top: 5px;
-                            }
                             &:last-child {
+                                font-size: 16px;
                                 color: blue;
-                                position: absolute;
-                                bottom: 5px;
-                                right: 5px;
+                                float: inline-end;
                             }
                         }
                     }

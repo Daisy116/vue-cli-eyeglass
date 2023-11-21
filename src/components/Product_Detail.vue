@@ -9,10 +9,10 @@ export default {
         const product = reactive({});
         const amount = ref(0);
         const isLoading = ref(true);
-        // console.log(route.params.pid);
 
         onMounted(() => {
-            axios.get(`https://run.mocky.io/v3/7e69c6fc-8f63-4e22-8087-61901e7922aa`)
+            axios.get(`https://run.mocky.io/v3/b1a37e38-8c8c-40aa-8482-01fb0d778835`)
+            // 正式站： https://run.mocky.io/v3/7e69c6fc-8f63-4e22-8087-61901e7922aa
             .then(res => {
                 let data = res.data["product-detail"][route.params.pid];
                 console.log("原始資料：", data);
@@ -49,6 +49,9 @@ export default {
                         break;
                     case "F0002":
                         product.FID = "鏡片清潔香波";
+                        break;
+                    case "E0001":
+                        product.FID = "年青人鈦合眼鏡";
                         break;
                     default:
                         product.FID = "";
