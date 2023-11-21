@@ -26,10 +26,6 @@ export default {
 	img {
 		vertical-align: middle;
 	}
-	h3 {
-		color: azure;
-		font-size: 50px;
-	}
 	h4 {
 		font-size: 22px;
 		text-align: center;

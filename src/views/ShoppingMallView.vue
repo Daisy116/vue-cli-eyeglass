@@ -209,7 +209,7 @@ export default {
             
             // 計算每一個<div class="slider-inner">的最大寬度，才知道何時滑到最右邊
             Object.values(ranking).forEach(item => {
-                sliderInnerMaxlength.push(445 * item.length)
+                sliderInnerMaxlength.push(440 * item.length)
             });
         });
 
@@ -275,8 +275,6 @@ export default {
             if (sliderInner) {
                 outer = slider.getBoundingClientRect();
                 inner = sliderInner.getBoundingClientRect();
-                console.log("outer is what", slider, outer)
-                console.log("inner is what", sliderInner, inner)
 
                 // 左邊滑到底了！！
                 if (parseInt(sliderInner.style.left) > 0) {
@@ -299,7 +297,7 @@ export default {
 }
 </script>
 
-<template>
+<template data-bs-theme="dark">
     <div class="blank"></div>
     <div class="container">
         <section>
@@ -583,7 +581,7 @@ export default {
             }
             .product-item {
                 max-width: 415px;
-                margin-right: 30px;
+                margin-right: 25px;
 
                 .image-box {
                     position: relative;

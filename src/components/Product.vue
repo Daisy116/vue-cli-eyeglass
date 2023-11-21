@@ -255,7 +255,6 @@ export default {
                 max-width: 2150px;
                 padding-left: 0;
                 display: flex;
-                justify-content: space-between;
                 flex-wrap: wrap;
 
                 >li {
