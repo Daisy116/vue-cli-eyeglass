@@ -1,10 +1,50 @@
 <script>
-export default {
+import TextFontSize from "@/components/_TextFontSize.vue";
+import { ref, watch } from 'vue';
 
+export default {
+    components: {
+        TextFontSize
+    },
+    setup() {
+        const postFontSize = ref(0);
+        let origin = {
+            h2: null,
+            li: null
+        };
+        watch(postFontSize, n => {
+            const dom_h2 = document.querySelectorAll(".container h2");
+            const dom_li = document.querySelectorAll(".container ol > li");
+
+            dom_h2.forEach(item => {
+                if (origin.h2 == null) {
+                    // 初始font-size，初始值抓一次就好！
+                    origin.h2 = window.getComputedStyle(item).getPropertyValue('font-size');
+                }
+                item.style.cssText  = "font-size: " + (Number(origin.h2.split("px")[0]) + n) + "px;";
+            });
+            dom_li.forEach(item => {
+                if (origin.li == null) {
+                    // 初始font-size，初始值抓一次就好！
+                    origin.li = window.getComputedStyle(item).getPropertyValue('font-size');
+                }
+                item.style.cssText  = "font-size: " + (Number(origin.li.split("px")[0]) + n) + "px;";
+            });
+        });
+
+        return {
+            postFontSize
+        }
+    }
 }
 </script>
 
 <template>
+    <TextFontSize 
+        @enlarge-text="postFontSize += 0.5" 
+        @smaller-text="postFontSize -= 0.5"
+    />
+
     <div class="blank"></div>
     <div class="container">
         <h1>常見問題</h1>

@@ -74,17 +74,19 @@ export default {
 <template>
   <!-- PC版的導覽列 -->
 	<nav class="header">
+		<!-- 最左邊Logo圖片 -->
 		<router-link to="/">
 			<img src="https://www.youngman.com.tw/images/LOGO03.png" class="logo-image">
 		</router-link>
 
-        <ul v-show="isSearch">
+		<!-- 中間導覽連結列表 -->
+        <ul class="header-list" v-show="isSearch">
             <li>
                 <span>{{ t("navbar-about") }}</span>
                 <div class="li-box">
-                    <router-link to="/about">關於我們</router-link>
-                    <router-link to="/location" class="dropdown-item">門市查詢</router-link>
-					<router-link to="/contact" class="dropdown-item">聯絡我們</router-link>
+                    <router-link to="/about">{{ t("navbar-about") }}</router-link>
+                    <router-link to="/location" class="dropdown-item">{{ t("footer-about4") }}</router-link>
+					<router-link to="/contact" class="dropdown-item">{{ t("footer-service1") }}</router-link>
                 </div>
             </li>
             <li>
@@ -107,21 +109,18 @@ export default {
             <li>
                 <span>{{ t("navbar-hidden") }}</span>
                 <div class="li-box li-box2">
-                    <router-link to="/NotFound404" class="dropdown-item">海昌</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">酷柏</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">加美</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">晶碩</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">美若康</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">愛爾康</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">博士倫</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">卡沛兒</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">永恆之美</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">嬌生安視優</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">OPT(圓瑞)</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">NOBEL(魔麗)</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">Anley(安儷)</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">Kosmo(蔻思茉)</router-link>
-					<router-link to="/NotFound404" class="dropdown-item">ARdes(彩色月拋)</router-link>
+                    <router-link to="/product/C0001" class="dropdown-item">{{ t("hidden-glasses1") }}</router-link>
+					<router-link to="/product/C0002" class="dropdown-item">{{ t("hidden-glasses2") }}</router-link>
+					<router-link to="/product/C0003" class="dropdown-item">{{ t("hidden-glasses3") }}</router-link>
+					<router-link to="/product/C0004" class="dropdown-item">{{ t("hidden-glasses4") }}</router-link>
+					<router-link to="/product/C0005" class="dropdown-item">{{ t("hidden-glasses5") }}</router-link>
+					<router-link to="/product/C0006" class="dropdown-item">{{ t("hidden-glasses6") }}</router-link>
+					<router-link to="/product/C0007" class="dropdown-item">{{ t("hidden-glasses7") }}</router-link>
+					<router-link to="/product/C0008" class="dropdown-item">{{ t("hidden-glasses8") }}</router-link>
+					<router-link to="/product/C0009" class="dropdown-item">{{ t("hidden-glasses9") }}</router-link>
+					<router-link to="/product/C0010" class="dropdown-item">{{ t("hidden-glasses10") }}</router-link>
+					<router-link to="/product/C0011" class="dropdown-item">{{ t("hidden-glasses11") }}</router-link>
+					<router-link to="/product/C0012" class="dropdown-item">{{ t("hidden-glasses12") }}</router-link>
                 </div>
             </li>
             <li>
@@ -132,6 +131,7 @@ export default {
             </li>
         </ul>
 
+		<!-- 右邊[登入/語系/搜尋]功能 -->
         <ul class="pc-login" v-show="isSearch">
             <li>
 				<router-link to="/login">{{ t("navbar-login") }}</router-link>
@@ -181,9 +181,9 @@ export default {
 					</a>
 					<div class="collapse" id="collapseBox1">
 						<span>
-							<router-link to="/about" @click="closeCollapse" class="dropdown-item">關於我們</router-link>
-							<router-link to="/location" @click="closeCollapse" class="dropdown-item">門市查詢</router-link>
-							<router-link to="/contact" @click="closeCollapse" class="dropdown-item">聯絡我們</router-link>
+							<router-link to="/about" @click="closeCollapse" class="dropdown-item">{{ t("navbar-about") }}</router-link>
+							<router-link to="/location" @click="closeCollapse" class="dropdown-item">{{ t("footer-about4") }}</router-link>
+							<router-link to="/contact" @click="closeCollapse" class="dropdown-item">{{ t("footer-service1") }}</router-link>
 						</span>
 					</div>
 				</li>
@@ -212,21 +212,18 @@ export default {
 					</a>
 					<div class="collapse" id="collapseBox2">
 						<div>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">海昌</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">酷柏</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">加美</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">晶碩</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">美若康</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">愛爾康</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">博士倫</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">卡沛兒</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">永恆之美</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">嬌生安視優</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">OPT(圓瑞)</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">NOBEL(魔麗)</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">Anley(安儷)</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">Kosmo(蔻思茉)</router-link>
-							<router-link to="/NotFound404" @click="closeCollapse" class="dropdown-item">ARdes(彩色月拋)</router-link>
+							<router-link to="/product/C0001" @click="closeCollapse" class="dropdown-item">{{ t("hidden-glasses1") }}</router-link>
+							<router-link to="/product/C0002" @click="closeCollapse" class="dropdown-item">{{ t("hidden-glasses2") }}</router-link>
+							<router-link to="/product/C0003" @click="closeCollapse" class="dropdown-item">{{ t("hidden-glasses3") }}</router-link>
+							<router-link to="/product/C0004" @click="closeCollapse" class="dropdown-item">{{ t("hidden-glasses4") }}</router-link>
+							<router-link to="/product/C0005" @click="closeCollapse" class="dropdown-item">{{ t("hidden-glasses5") }}</router-link>
+							<router-link to="/product/C0006" @click="closeCollapse" class="dropdown-item">{{ t("hidden-glasses6") }}</router-link>
+							<router-link to="/product/C0007" @click="closeCollapse" class="dropdown-item">{{ t("hidden-glasses7") }}</router-link>
+							<router-link to="/product/C0008" @click="closeCollapse" class="dropdown-item">{{ t("hidden-glasses8") }}</router-link>
+							<router-link to="/product/C0009" @click="closeCollapse" class="dropdown-item">{{ t("hidden-glasses9") }}</router-link>
+							<router-link to="/product/C0010" @click="closeCollapse" class="dropdown-item">{{ t("hidden-glasses10") }}</router-link>
+							<router-link to="/product/C0011" @click="closeCollapse" class="dropdown-item">{{ t("hidden-glasses11") }}</router-link>
+							<router-link to="/product/C0012" @click="closeCollapse" class="dropdown-item">{{ t("hidden-glasses12") }}</router-link>
 						</div>
 					</div>
 				</li>
@@ -242,7 +239,7 @@ export default {
 				</li>
 			</ul>
 			<router-link to="/login" @click="closeCollapse" class="login">
-				登入／註冊
+				{{ t("navbar-login-H5") }}
 			</router-link>
 			</div>
 		</div>
@@ -252,6 +249,7 @@ export default {
 <style lang="scss" scoped>
 	* {
 		box-sizing: border-box;
+		padding: 0;
 	}
 
 	// 手機版
@@ -283,11 +281,7 @@ export default {
 			.nav-item span {
 				margin: 0 20px 10px 5px;
 				display: flex;
-				justify-content: flex-start;
-
-				a {
-					padding: 0 10px;
-				}
+				justify-content: space-between;
 			}
 			.nav-link {
 				margin: 0 20px 0 5px;
@@ -314,11 +308,14 @@ export default {
 
 				div {
 					display: flex;
+					justify-content: space-around;
 					flex-wrap: wrap;
 				}
 				a {
 					width: auto;
-					padding: 0 10px;
+				}
+				a+a {
+					margin-left: 10px;
 				}
 			}
 		}
@@ -365,12 +362,15 @@ export default {
 
 			> ul {
 				display: flex;
-				margin: 20px auto 0px auto;
+				justify-content: space-evenly;
+				margin: auto;
 				font-weight: 600;
 				font-size: 20px;
 
 				> li {
 					position: relative;
+					padding-bottom: 15px;
+    				transform: translateY(10px);
 
 					a {
 						color: black;
@@ -379,7 +379,7 @@ export default {
 						color: rgba(0, 0, 0, 0.5);
 					}
 					.li-box {
-						max-width: 300px;
+						// max-width: 300px;
 						background-color: white;
 						text-align: center;
 						border: solid 24px #fff;
@@ -389,7 +389,8 @@ export default {
 
 						position: absolute;
 						top: 45px;
-						left: -70px;
+						left: 50%;
+						transform: translateX(-50%);
 
 						display: none;
 
@@ -399,35 +400,19 @@ export default {
 							font-size: 18px;
 
 							display: inline-block;
-							min-width: 72px;
-							max-width: 300px;
+							// min-width: 72px;
+							// max-width: 300px;
 							white-space:nowrap;  // 文字不換行
-						}
-						a:first-child {
-							margin-right: 20px;
 						}
 						a:hover {
 							color: rgba(28, 13, 13, 0.65);
 						}
 						a+a {
-							margin-right: 20px;
-						}
-					}
-					/* 當list的內容很多時 */
-					.li-box2 {
-						display: none;
-						width: 700px;
-						max-width: 700px;
-						max-height: 200px;
-						overflow-y: auto;
-						transform: translateX(-30%);
-
-						a {
-							line-height: 1.5em;
+							margin-left: 20px;
 						}
 					}
 				}
-				> li:hover {
+				li:hover {
 					color: rgba(0, 0, 0, 0.5);
 					cursor: pointer;
 
@@ -436,19 +421,18 @@ export default {
 					}
 					.li-box {
 						display: flex;
-						text-align: left;
+						text-align: center;
 					}
 					.li-box2 {
-						display: block;
+						min-width: 600px;
+						display: flex;
+						justify-content: center;
+						flex-wrap: wrap;
 						 .dropdown-item {
-							width: auto;
-							text-align: left;
+							width: inherit;
+							margin: 0 10px;
 						 }
 					}
-				}
-
-				> li+li {
-					margin-left: 80px;
 				}
 			}
 			ul.pc-login {
@@ -475,15 +459,23 @@ export default {
 					color: darkgray;
 				}
 			}
+			.header-list {
+				flex-grow: 1;
+			}
+			span {
+				position: relative;
+			}
 			span::after {
 				content: '';
 				display: block;
 
 				width: 0%;
 				height: 2px;
-				margin: 10px 0;
-				background-color: rgba(107, 93, 93, 0.5);
+				background-color: rgba(0, 0, 0, 0.5);
 				transition: width .5s;
+
+				position: absolute;
+    			bottom: -5px;
 			}
 			.pc-searchbox {
 				margin-left: 428px;

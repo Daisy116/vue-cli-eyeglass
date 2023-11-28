@@ -1,5 +1,6 @@
 <script>
 import { onMounted, reactive, ref, watch } from 'vue';
+import { useI18n } from "vue-i18n";
 import axios from "axios";
 
 export default {
@@ -9,6 +10,9 @@ export default {
         const areaActive = ref("");
         const storeActive = ref("");
         const location = reactive({
+            "中文": {},
+            "English": {},
+            "日語": {},
             city: [],
             area: [],
             store: []
@@ -16,11 +20,18 @@ export default {
         const searchData = reactive({ store: [] });
 
         onMounted(() => {
-            axios.get("https://run.mocky.io/v3/8a666df0-cd9e-4765-ac09-f9297ea7c531")
+            axios.get("https://run.mocky.io/v3/8a30e931-fa03-4dcd-b339-33af8e1705fa")
+            // 正式站：https://run.mocky.io/v3/8a666df0-cd9e-4765-ac09-f9297ea7c531
             .then(res => {
+                // 取得所有語系的原始資料
+                location['中文'] = res.data['中文'];
+                location['English'] = res.data['English'];
+                location['日語'] = res.data['日語'];
+                
                 // 取得city資訊
-                location.city = res.data.city;
-                location.store = res.data.store;
+                location.city = res.data[locale._value].city;
+                location.store = res.data[locale._value].store;
+
                 searchData.store = location.store;
 
                 isLoading.value = !isLoading.value;
@@ -74,7 +85,6 @@ export default {
             storeActive.value = "";
 
             const newArr = location.area.filter(area => area.name === newArea);
-            console.log(newArr, location);
             const newStore = newArr[0]["store-id"];
             searchData.store = location.store.filter(store => newStore.includes(store.id));
         });
@@ -104,7 +114,21 @@ export default {
             searchData.store = location.store.filter(item => item.id === newItem);
         });
 
+
+        // 使用useI18n實作語系切換
+	    const { t, locale } = useI18n();
+        // 用watch監控是否切換了語系
+        watch(locale, (newlocale) => {
+            localStorage.setItem("locale", newlocale);
+            
+            // 將資料都改成切換後的語系
+            location.city = location[locale._value].city;
+            location.store = location[locale._value].store;
+            searchData.store = location[locale._value].store;
+        });
+
         return {
+            t, locale,
             location, searchData,
             cityActive, areaActive, storeActive,
             isLoading
@@ -116,9 +140,9 @@ export default {
 <template>
     <div class="container">
         <form>
-            <h3>門市查詢</h3>
+            <h3>{{ t("footer-about4") }}</h3>
             <select v-model="cityActive">
-                <option value>請選擇縣市</option>
+                <option value>{{ t("location-select1") }}</option>
                 <option 
                     v-for="item in location.city" 
                     :value="item.name" 
@@ -127,7 +151,7 @@ export default {
                 </option>
             </select>
             <select v-model="areaActive">
-                <option value>請選擇區域</option>
+                <option value>{{ t("location-select2") }}</option>
                 <option 
                     v-for="item in location.area"
                     :value="item.name"
@@ -136,7 +160,7 @@ export default {
                 </option>
             </select>
             <select v-model="storeActive">
-                <option value>所有門市</option>
+                <option value>{{ t("location-select3") }}</option>
                 <option 
                     v-for="item in searchData.store"
                     :value="item.id"
@@ -148,22 +172,22 @@ export default {
         <table>
             <thead>
                 <tr>
-                    <th>門市名稱</th>
-                    <th>門市電話</th>
-                    <th>門市地址</th>
-                    <th>營業時間</th>
-                    <th>營業人</th>
-                    <th>Google Map</th>
+                    <th>{{ t("location-table-tr1") }}</th>
+                    <th>{{ t("location-table-tr2") }}</th>
+                    <th>{{ t("location-table-tr3") }}</th>
+                    <th>{{ t("location-table-tr4") }}</th>
+                    <th>{{ t("location-table-tr5") }}</th>
+                    <th>{{ t("location-table-tr6") }}</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-show="!isLoading" v-for="item in searchData.store" :key="item.id">
-                    <td data-th="門市名稱">{{ item.name }}</td>
-                    <td data-th="門市電話">{{ item.phone }}</td>
-                    <td data-th="門市地址">{{ item.address }}</td>
-                    <td data-th="營業時間">{{ item["open-time"] }}</td>
-                    <td data-th="營業人">{{ item.people }}</td>
-                    <td data-th="Google Map">
+                    <td :data-th="t('location-table-tr1')">{{ item.name }}</td>
+                    <td :data-th="t('location-table-tr2')">{{ item.phone }}</td>
+                    <td :data-th="t('location-table-tr3')">{{ item.address }}</td>
+                    <td :data-th="t('location-table-tr4')">{{ item["open-time"] }}</td>
+                    <td :data-th="t('location-table-tr5')">{{ item.people }}</td>
+                    <td :data-th="t('location-table-tr6')">
                         <a :href="item.map">
                             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
                                 <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>

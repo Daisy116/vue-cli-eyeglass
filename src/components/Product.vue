@@ -17,8 +17,8 @@ export default {
         const maxPage = ref(1);
 
         onMounted(() => {
-            axios.get(`https://run.mocky.io/v3/316138d0-16b6-441e-82e5-7bc2c8472ec7`)
-            // https://run.mocky.io/v3/7e69c6fc-8f63-4e22-8087-61901e7922aa
+            axios.get(`https://run.mocky.io/v3/49442545-7350-4bba-ac64-929c1e50d049`)
+            // https://run.mocky.io/v3/316138d0-16b6-441e-82e5-7bc2c8472ec7
             .then(res => {
                 // 初始化輸出到畫面的資料
                 product.data = res.data[route.params.id];
@@ -121,6 +121,7 @@ export default {
     <div class="container">
         <!-- 左側產品選單 -->
         <div class="sidebar">
+            <!-- 保健＆週邊 -->
             <h3>{{ t("footer-health") }}</h3>
             <ul>
                 <li>
@@ -130,10 +131,31 @@ export default {
                     <router-link to="/product/F0002">{{ t("footer-health2") }}</router-link>
                 </li>
             </ul>
+
+            <!-- 有框眼鏡 -->
             <h3>{{ t("navbar-glasses") }}</h3>
             <ul>
                 <li>
                     <router-link to="/product/E0001">{{ t("navbar-glasses1") }}</router-link>
+                </li>
+            </ul>
+
+            <!-- 隱形眼鏡 -->
+            <h3>{{ t("navbar-hidden") }}</h3>
+            <ul>
+                <li>
+                    <router-link to="/product/C0001">{{ t("hidden-glasses1") }}</router-link>
+                    <router-link to="/product/C0002">{{ t("hidden-glasses2") }}</router-link>
+                    <router-link to="/product/C0003">{{ t("hidden-glasses3") }}</router-link>
+                    <router-link to="/product/C0004">{{ t("hidden-glasses4") }}</router-link>
+                    <router-link to="/product/C0005">{{ t("hidden-glasses5") }}</router-link>
+                    <router-link to="/product/C0006">{{ t("hidden-glasses6") }}</router-link>
+                    <router-link to="/product/C0007">{{ t("hidden-glasses7") }}</router-link>
+                    <router-link to="/product/C0008">{{ t("hidden-glasses8") }}</router-link>
+                    <router-link to="/product/C0009">{{ t("hidden-glasses9") }}</router-link>
+                    <router-link to="/product/C0010">{{ t("hidden-glasses10") }}</router-link>
+                    <router-link to="/product/C0011">{{ t("hidden-glasses11") }}</router-link>
+                    <router-link to="/product/C0012">{{ t("hidden-glasses12") }}</router-link>
                 </li>
             </ul>
         </div>
@@ -255,11 +277,12 @@ export default {
                 max-width: 2150px;
                 padding-left: 0;
                 display: flex;
+                justify-content: space-between;
                 flex-wrap: wrap;
 
                 >li {
                     width: 500px;
-                    width: calc(100% / 3 - 24px);
+                    width: calc(30% - 24px);
                 }
                 .img-box {
                     position: relative;
@@ -284,8 +307,8 @@ export default {
                 }
                 .img-box:hover {
                     cursor: pointer;
-                    box-shadow: 20px 20px 20px rgba(229, 229, 229, 0.7607843137), 
-                                -20px -20px 20px rgba(229, 229, 229, 0.7607843137);
+                    box-shadow: 10px 10px 20px rgba(229, 229, 229, 0.7607843137), 
+                                -10px -10px 20px rgba(229, 229, 229, 0.7607843137);
 
                     img {
                         transform: scale(1);
@@ -310,7 +333,7 @@ export default {
                     z-index: -1;
                 }
                 .content {
-                    padding: 20px;
+                    padding: 10px 20px;
                     font-weight: bolder;
 
                     p span{

@@ -4,9 +4,11 @@ import $ from 'jquery';
 
 export default {
     setup() {
-        const rankID = ref(1);
-        const monthID = ref(3);
-        const newID = ref(5);
+        const rankID = ref(1);  // 暢銷排行榜，預設tab1
+        const monthID = ref(3); // 本月主打，預設tab3
+        const newID = ref(5);   // 活動商品，預設tab5
+
+        // 所有tab要呈現的資料寫在ranking物件裡
         const ranking = reactive({
             "1": 
             [
@@ -62,7 +64,7 @@ export default {
                     price: "NT$ 99"
                 },
                 {
-                    photoSrc: "https://app.youngman.com.tw/images/WebBanner/4516861458.png",
+                    photoSrc: "https://app.youngman.com.tw/images/S00001/Product/2023082900001/4516756876.png",
                     type: "ReVIA a美",
                     title: "ReVIA彩色日拋-橄欖女神",
                     price: "NT$ 777"
@@ -73,7 +75,7 @@ export default {
                 {
                     photoSrc: "https://app.youngman.com.tw/images/S00001/Product/2022120600001/4524772332.png",
                     type: "NOBEL 魔麗",
-                    title: "NOBEL-玻尿酸非球面日拋30片裝",
+                    title: "NOBEL-玻尿酸非球面日拋",
                     price: "NT$ 350"
                 },
                 {
@@ -97,7 +99,7 @@ export default {
                 {
                     photoSrc: "https://app.youngman.com.tw/images/S00001/Product/2021032200001/4459769509.jpg",
                     type: "美若康",
-                    title: "美若康澄氧高透氧矽水膠日拋",
+                    title: "澄氧高透氧矽水膠日拋",
                     price: "NT$ 580"
                 }
             ],
@@ -184,7 +186,24 @@ export default {
             }
             newID.value = num;
         }
-
+        // 點擊愛心
+        const goLike = (e) => {
+            if (Object.values(e.target.classList).includes('bi-suit-heart')) {
+                e.target.classList.remove("bi-suit-heart");
+                e.target.classList.add("bi-suit-heart-fill");
+            } else {
+                e.target.classList.add("bi-suit-heart");
+                e.target.classList.remove("bi-suit-heart-fill");
+            }
+        }
+        // canGrab為是否可以拖曳卡片！
+        const canGrab = ref(true);
+        const heartHover = (e) => {
+            canGrab.value = false;  // 當滑鼠移到愛心上面時，禁止拖曳卡片(只能觸發goLike，其餘function不做)
+        }
+        const heartLeave = () => {
+            canGrab.value = true;
+        }
 
 
         // 開關
@@ -216,22 +235,25 @@ export default {
         
 
         const mouseDown = (event) => {
-            slider = event.target;
-            sliderInner = event.target.childNodes[0];
-
-            // 目前滑鼠觸發事件時距離 slider x 軸的 px
-            // console.log(event.offsetX);
-
-            // 目前 sliderInner 距離它父層元素（也就是 slider）的 x 軸距離
-            // console.log(sliderInner.offsetParent);
-            // console.log(sliderInner.offsetLeft);
-
-            startx = event.offsetX - sliderInner.offsetLeft;
-            // console.log(startx);
-
-            slider.style.cursor = 'grabbing';
-            // 開啟開關（代表現在是在抓的狀態）
-            isdraggin = true;
+            // 當滑鼠不在愛心上時，才會執行以下程式(不然會噴錯)
+            if (canGrab.value) {
+                slider = event.target;
+                sliderInner = event.target.childNodes[0];
+    
+                // 目前滑鼠觸發事件時距離 slider x 軸的 px
+                // console.log(event.offsetX);
+    
+                // 目前 sliderInner 距離它父層元素（也就是 slider）的 x 軸距離
+                // console.log(sliderInner.offsetParent);
+                // console.log(sliderInner.offsetLeft);
+    
+                startx = event.offsetX - sliderInner.offsetLeft;
+                // console.log(startx);
+    
+                slider.style.cursor = 'grabbing';
+                // 開啟開關（代表現在是在抓的狀態）
+                isdraggin = true;
+            }
         }
 
         // 當滑鼠移進去slider區域，滑鼠鼠標變成可以抓取的手手
@@ -269,7 +291,6 @@ export default {
 
             checkBoundary();
         }
-
         // 確認目前位置
         function checkBoundary () {
             if (sliderInner) {
@@ -291,7 +312,8 @@ export default {
         return {
             ranking, monthID, newID, sliderInnerMaxlength,
             mouseDown, mouseMove, mouseEnter, mouseUp,
-            changeTab, rankID
+            changeTab, rankID,
+            goLike, heartHover, heartLeave
         }
     }
 }
@@ -320,8 +342,8 @@ export default {
                         <div v-for="(item, id) in ranking[1]" :key="item.photoSrc" class="product-item">
                             <div class="image-box">
                                 <div class="tag">{{ id+1 }}</div>
-                                <i class="bi bi-suit-heart"></i>
-                                <a href="">
+                                <i class="bi bi-suit-heart" @click="goLike" @mouseenter="heartHover" @mouseleave="heartLeave"></i>
+                                <a href="javascript:;">
                                     <img :src="item.photoSrc">
                                 </a>
                             </div>
@@ -342,8 +364,8 @@ export default {
                         <div v-for="(item, id) in ranking[2]" :key="item.photoSrc" class="product-item">
                             <div class="image-box">
                                 <div class="tag">{{ id+1 }}</div>
-                                <i class="bi bi-suit-heart"></i>
-                                <a href="">
+                                <i class="bi bi-suit-heart" @click="goLike" @mouseenter="heartHover" @mouseleave="heartLeave"></i>
+                                <a href="javascript:;">
                                     <img :src="item.photoSrc">
                                 </a>
                             </div>
@@ -378,8 +400,8 @@ export default {
                         <div v-for="(item, id) in ranking[3]" :key="item.photoSrc" class="product-item">
                             <div class="image-box">
                                 <div class="tag">{{ id+1 }}</div>
-                                <i class="bi bi-suit-heart"></i>
-                                <a href="">
+                                <i class="bi bi-suit-heart" @click="goLike" @mouseenter="heartHover" @mouseleave="heartLeave"></i>
+                                <a href="javascript:;">
                                     <img :src="item.photoSrc">
                                 </a>
                             </div>
@@ -400,8 +422,8 @@ export default {
                         <div v-for="(item, id) in ranking[4]" :key="item.photoSrc" class="product-item">
                             <div class="image-box">
                                 <div class="tag">{{ id+1 }}</div>
-                                <i class="bi bi-suit-heart"></i>
-                                <a href="">
+                                <i class="bi bi-suit-heart" @click="goLike" @mouseenter="heartHover" @mouseleave="heartLeave"></i>
+                                <a href="javascript:;">
                                     <img :src="item.photoSrc">
                                 </a>
                             </div>
@@ -436,8 +458,8 @@ export default {
                 <div class="product-wrap flex">
                     <div v-for="item in ranking[5]" :key="item.photoSrc" class="product-item">
                         <div class="image-box">
-                            <i class="bi bi-suit-heart"></i>
-                            <a href="">
+                            <i class="bi bi-suit-heart" @click="goLike"></i>
+                            <a href="javascript:;">
                                 <img :src="item.photoSrc">
                             </a>
                         </div>
@@ -458,8 +480,8 @@ export default {
                 <div class="product-wrap flex">
                     <div v-for="item in ranking[6]" :key="item.photoSrc" class="product-item">
                         <div class="image-box">
-                            <i class="bi bi-suit-heart"></i>
-                            <a href="">
+                            <i class="bi bi-suit-heart" @click="goLike"></i>
+                            <a href="javascript:;">
                                 <img :src="item.photoSrc">
                             </a>
                         </div>
@@ -485,8 +507,6 @@ export default {
     .blank {
         height: 83px;
     }
-
-
     .slider {
         max-width: 100%;
         margin: 0 auto;
@@ -511,10 +531,6 @@ export default {
         object-fit: cover;
         object-position: center center;
     }
-
-
-
-
     .container {
         max-width: 1300px;
         margin: auto;
@@ -640,8 +656,18 @@ export default {
                         color: rgb(183, 189, 198);
                         cursor: pointer;
 
+                        // 利用pointer-events穿透上層的div，這樣才點的到愛心！！
+                        pointer-events: fill;
+
                         &:hover {
                             color: black;
+                        }
+                        &.bi-suit-heart-fill {
+                            color: red;
+
+                            &:hover {
+                                filter: brightness(2);
+                            }
                         }
                     }
                     a {
@@ -697,7 +723,12 @@ export default {
             height: 50px;
         }
         .slider {
-            height: 300px;
+            max-width: none;
+            height: 320px;
+            overflow: scroll;
+        }
+        .slider-inner {
+            width: fit-content;
         }
         .container {
             max-width: none;
@@ -738,14 +769,21 @@ export default {
                 .product-item {
                     min-width: 170px;
                     margin-right: 10px;
+
                     .image-box {
+                        max-width: 170px;
                         .tag {
                             width: 40px;
                             height: 40px;
+
                             &::before {
+                                border-top: 8px solid #cfc5b9;
+                                border-right: 20px solid transparent;
                                 top: 40px;
                             }
                             &::after {
+                                border-top: 8px solid #cfc5b9;
+                                border-left: 20px solid transparent;
                                 top: 40px;
                             }
                         }

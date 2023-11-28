@@ -1,8 +1,22 @@
 <script>
 import $ from 'jquery';
+import TextFontSize from "@/components/_TextFontSize.vue";
+import { ref, watch } from 'vue';
+import { useI18n } from "vue-i18n";
 
 export default {
+    components: {
+        TextFontSize
+    },
     setup() {
+        // 使用useI18n實作語系切換
+	    const { t, locale } = useI18n();
+        // 用watch監控是否切換了語系
+        watch(locale, (newlocale) => {
+            localStorage.setItem("locale", newlocale);
+        });
+
+        // 點擊頁籤後，瀏覽器卷軸移動到該標籤
         const clickTab = (str) => {
             let string = "#" + str;
             // 用offset()抓取該區塊的位置
@@ -12,101 +26,131 @@ export default {
             top = top - 84;
             $("html, body").animate({scrollTop: top}, 400);
         };
+
+        const postFontSize = ref(20);
+        watch(postFontSize, n => {
+            const dom_p = document.querySelectorAll(".container p");
+            const dom_h2 = document.querySelectorAll(".container h2");
+            const dom_h4 = document.querySelectorAll(".container h4");
+            const dom_li = document.querySelectorAll(".container .listbox > li > div > ul > li");
+            
+            dom_p.forEach(item => {
+                item.style.cssText  = "font-size: " + n + "px;";
+            });
+            dom_h2.forEach(item => {
+                // h2的初始font-size為30，所以n要加10
+                item.style.cssText  = "font-size: " + (n+10) + "px;";
+            });
+            dom_h4.forEach(item => {
+                item.style.cssText  = "font-size: " + n + "px;";
+            });
+            dom_li.forEach(item => {
+                // li的初始font-size為16，所以n要減4
+                item.style.cssText  = "font-size: " + (n-4) + "px;";
+            });
+        })
         
         return {
-            clickTab
+            t, locale,
+            clickTab,
+            postFontSize
         };
     }
 };
 </script>
 
 <template>
+    <TextFontSize 
+        @enlarge-text="postFontSize += 0.5" 
+        @smaller-text="postFontSize -= 0.5"
+    />
+
     <div class="container">
-        <h1>關於Young Man 年青人眼鏡</h1>
+        <h1>{{ t("about-h1") }}</h1>
         <ul class="tab">
             <li>
-                <a @click="clickTab('about1')">企業沿革</a>
+                <a @click="clickTab('about1')">{{ t("footer-about1") }}</a>
             </li>
             <li>
-                <a @click="clickTab('about2')">服務項目</a>
+                <a @click="clickTab('about2')">{{ t("footer-about2") }}</a>
             </li>
             <li>
-                <a @click="clickTab('about3')">會員服務</a>
+                <a @click="clickTab('about3')">{{ t("footer-about3") }}</a>
             </li>
         </ul>
         <section id="about1">
-            <h2>企業沿革</h2>
-            <p>台灣配戴眼鏡的人數越來越多，因為視力的問題而深受困擾的民眾也一直增加，街頭林立的眼鏡行正如雨後春筍般的紛紛開設。</p>
-            <p>我們秉持著專業貼心的精神，爲眾多眼鏡族解決視力問題帶來的困擾。</p>
-            <p>年青人眼鏡給您最優質的服務，絕對是您最佳的選擇。</p>
+            <h2>{{ t("footer-about1") }}</h2>
+            <p>{{ t("about1-p1") }}</p>
+            <p>{{ t("about1-p2") }}</p>
+            <p>{{ t("about1-p3") }}</p>
             <div class="imgbox">
                 <img src="~@/assets/images/eyeglass4.jpeg">
                 <img src="~@/assets/images/eyeglass5.png">
             </div>
         </section>
         <section id="about2">
-            <h2>服務項目</h2>
-            <h4>驗配眼鏡｜免費保養｜專業諮詢</h4>
+            <h2>{{ t("footer-about2") }}</h2>
+            <h4>{{ t("about-service-title") }}</h4>
             <ul class="listbox">
                 <li>
                     <img src="~@/assets/images/eyeglass6.png" alt="">
                     <div>
-                        <h4>驗配眼鏡</h4>
+                        <h4>{{ t("about-service1") }}</h4>
                         <ul>
-                            <li>驗配軟、硬式隱形眼鏡</li>
-                            <li>近視、遠視、散光、老花、弱視、二用雙光鏡片、多焦點鏡片、斜視鏡片、色盲鏡片</li>
-                            <li>世界各大名牌眼鏡批發零售</li>
+                            <li>{{ t("about-service1-li1") }}</li>
+                            <li>{{ t("about-service1-li2") }}</li>
+                            <li>{{ t("about-service1-li3") }}</li>
                         </ul>
                     </div>
                 </li>
                 <li>
                     <img src="~@/assets/images/eyeglass7.png" alt="">
                     <div>
-                        <h4>免費保養</h4>
+                        <h4>{{ t("about-service2") }}</h4>
                         <ul>
-                            <li>免費更換零件</li>
-                            <li>視力保健檢查</li>
-                            <li>清洗、保養、消毒隱形眼鏡</li>
-                            <li>調整鏡框、清洗眼鏡</li>
-                            <li>關懷弱視兒童視力檢查</li>
+                            <li>{{ t("about-service2-li1") }}</li>
+                            <li>{{ t("about-service2-li2") }}</li>
+                            <li>{{ t("about-service2-li3") }}</li>
+                            <li>{{ t("about-service2-li4") }}</li>
+                            <li>{{ t("about-service2-li5") }}</li>
                         </ul>
                     </div>
                 </li>
                 <li>
                     <img src="~@/assets/images/eyeglass8.png" alt="">
                     <div>
-                        <h4>專業諮詢</h4>
+                        <h4>{{ t("about-service3") }}</h4>
                         <ul>
-                            <li>提供視力及眼鏡之專業諮詢</li>
-                            <li>驗配眼鏡及硬式隱形眼鏡</li>
-                            <li>驗配漸進多焦點眼鏡</li>
-                            <li>雙眼視力及立體視覺檢查</li>
+                            <li>{{ t("about-service3-li1") }}</li>
+                            <li>{{ t("about-service3-li2") }}</li>
+                            <li>{{ t("about-service3-li3") }}</li>
+                            <li>{{ t("about-service3-li4") }}</li>
                         </ul>
                     </div>
                 </li>
             </ul>
         </section>
         <section id="about3">
-            <h2>會員服務</h2>
+            <h2>{{ t("footer-about3") }}</h2>
             <ul class="listbox">
                 <li>
                     <img src="~@/assets/images/eyeglass6.png" alt="">
                     <div>
-                        <h4>會員卡使用須知</h4>
+                        <h4>{{ t("about-member-title") }}</h4>
                         <ul>
-                            <li>點數累積是以折扣優惠或使用抵用卷後所支付之實際金額為準</li>
-                            <li>每消費NT$100元即可累積2點紅利點數</li>
-                            <li>每100點紅利點數可折抵NT$100元之金額，不同會員卡號不得折抵同一筆消費</li>
-                            <li>系統折抵以20點紅利點數為單位換算可折抵之金額， 紅利點數不足20點之點數將繼續累積</li>
-                            <li>紅利點數之累積與折抵限當場消費當場使用</li>
-                            <li>為確保顧客權益，請於來店消費時務必攜帶會員卡</li>
+                            <li>{{ t("about-member-li1") }}</li>
+                            <li>{{ t("about-member-li2") }}</li>
+                            <li>{{ t("about-member-li3") }}</li>
+                            <li>{{ t("about-member-li4") }}</li>
+                            <li>{{ t("about-member-li5") }}</li>
+                            <li>{{ t("about-member-li6") }}</li>
                         </ul>
                     </div>
                 </li>
             </ul>
         </section>
         <div class="home-btn">
-            <router-link to="/">回到首頁</router-link>
+            <router-link to="/">{{ t("return-home") }}</router-link>
         </div>
     </div>
 </template>
@@ -115,6 +159,12 @@ export default {
     * {
         color: black;
     }
+    ul {
+        padding: 0;
+    }
+    
+    $post-pont-size: 20px;
+
     .container {
         max-width: 1300px;
         margin-top: 84px;
@@ -134,7 +184,8 @@ export default {
             text-align: left;
         }
         p {
-            font-size: 20px;
+            // font-size: 20px;
+            font-size: $post-pont-size;
             margin-bottom: .3em;
         }
         .tab {
@@ -150,6 +201,10 @@ export default {
                 a {
                     display: block;
                     padding-bottom: 10px;
+
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
             li:hover {
@@ -184,7 +239,7 @@ export default {
                 padding-left: 40px;
 
                 >h4 {
-                    font-size: 24px;
+                    font-size: 20px;
                 }
                 >ul {
                     margin-top: 8px;
@@ -227,6 +282,9 @@ export default {
         .container {
             margin-top: 40px;
 
+            .tab li {
+                width: 30%;
+            }
             .imgbox img {
                 width: 90%;
             }
