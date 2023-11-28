@@ -7,19 +7,17 @@ import $ from 'jquery';
 
 
 export default {
-	// emits: ['enlarge-text', 'smaller-text'],
 	components: {
 		Header,
 		Footer
 	},
-  setup(props, { emit }) {
+  setup() {
 		// 使用useI18n實作語系切換
 		const { t, locale } = useI18n();
 		// isSearch控制PC的放大鏡搜尋畫面
 		const isSearch = ref(true);
 
 		const goTop = () => {
-			console.log("置頂")
 			// 使用jQuery的scrollTop實作置頂功能，並用animate方法慢慢往上移
 			$("html, body").animate({scrollTop: 0}, 400);
 		};
@@ -40,7 +38,6 @@ export default {
 			t, locale,
 			isSearch,
 			goTop, goSearch, openModal,
-			// emit
 		};
 	}
 };
