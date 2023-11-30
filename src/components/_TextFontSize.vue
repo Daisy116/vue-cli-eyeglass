@@ -17,11 +17,19 @@
 	<div class="changeFont">
 		<div class="hover-tip" @click="$emit('enlarge-text')">
 			A+
-			<span class="tooltiptext">{{ t("enlarge-text") }}</span>
+			<div class="tooltiptext">
+				<div>
+					{{ t("enlarge-text") }}
+				</div>
+			</div>
 		</div>
 		<div class="hover-tip" @click="$emit('smaller-text')">
 			A-
-			<span class="tooltiptext">{{ t("smaller-text") }}</span>
+			<div class="tooltiptext">
+				<div>
+					{{ t("smaller-text") }}
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -55,28 +63,33 @@
 			}
 			.tooltiptext {
 				visibility: hidden;
-				width: 120px;
+				padding: 5px 10px;
 				background-color: gray;
 				opacity: .5;
 				color: #fff;
 				font-size: 18px;
 				text-align: center;
+				white-space: nowrap;
+
 				border-radius: 6px;
-				padding: 5px 0;
 				position: absolute;
 				z-index: 1;
 				top: 140%;
 				right: 10%;
 
-				&::before {
-					content: '';
-					border-width: 15px;
-					border-style: solid;
-					border-color: rgba(0,0,0,0) rgba(0,0,0,0) gray rgba(0,0,0,0); /* 上下、左右 */
+				>div {
+					position: relative;
 
-					position: absolute;
-					bottom: 63px;
-					right: 2px;
+					&::before{
+						content: '';
+						border-width: 15px;
+						border-style: solid;
+						border-color: rgba(0,0,0,0) rgba(0,0,0,0) gray rgba(0,0,0,0); /* 上下、左右 */
+	
+						position: absolute;
+						top: -115%;
+						right: 2px;
+					}
 				}
 			}
 		}
