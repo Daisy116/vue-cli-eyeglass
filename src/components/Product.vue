@@ -10,27 +10,28 @@ export default {
         const route = useRoute();
         const { t, locale } = useI18n();
 
-        const product = reactive({data: {}});
-        const allDate = reactive({data: {}});
+        const product = reactive({data: {}});  // 要呈現到畫面上的資料
+        const allDate = reactive({data: {}});  // 儲存所有資料
         const isLoading = ref(true);
-        const page = ref(1);
-        const maxPage = ref(1);
+        const page = ref(1);     // 目前頁數
+        const maxPage = ref(1);  // 總頁數
 
         onMounted(() => {
             axios.get(`https://run.mocky.io/v3/49442545-7350-4bba-ac64-929c1e50d049`)
             // https://run.mocky.io/v3/316138d0-16b6-441e-82e5-7bc2c8472ec7
             .then(res => {
-                // 初始化輸出到畫面的資料
-                product.data = res.data[route.params.id];
-                product.title = res.data["sort"][route.params.id];
                 // 儲存原始資料，在watch時使用
                 allDate.data = res.data;
 
-                // 當資料超過9筆、且PC版時，第一頁只顯示前8筆資料
-                if (res.data[route.params.id].length > 9 && screen.width > 490) {
+                // 初始化輸出到畫面的資料
+                product.data = allDate.data[route.params.id];
+                product.title = allDate.data["sort"][route.params.id];
+
+                // 當資料超過9筆、且PC版時，第一頁只顯示前9筆資料
+                if (allDate.data[route.params.id].length > 9 && screen.width > 490) {
                     product.filterData = [];
-                    for (let i = 0; i < res.data[route.params.id].length; i+=9) {
-                        product.filterData.push(res.data[route.params.id].slice(i, i+9))
+                    for (let i = 0; i < allDate.data[route.params.id].length; i+=9) {
+                        product.filterData.push(allDate.data[route.params.id].slice(i, i+9))
                     }
                     product.data = product.filterData[0];
 
@@ -95,6 +96,8 @@ export default {
                 maxPage.value = product.filterData.length;
             } else {
                 maxPage.value = 1;
+                product.filterData = [];
+                product.filterData.push(allDate.data[route.params.id]);
             }
             // 回到第一頁
             page.value = 1;
@@ -275,14 +278,14 @@ export default {
 
             .product-box {
                 max-width: 2150px;
+                min-height: 620px;
                 padding-left: 0;
-                display: flex;
-                justify-content: space-between;
-                flex-wrap: wrap;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
 
                 >li {
-                    width: 500px;
-                    width: calc(30% - 24px);
+                    width: 400px;
+                    margin: auto;
                 }
                 .img-box {
                     position: relative;
@@ -420,8 +423,10 @@ export default {
 
                 .product-box {
                     max-width: 360px;
+                    min-height: 380px;
                     padding-left: 0;
                     margin: 0;
+                    grid-template-columns: 1fr 1fr;
 
                     li {
                         width: 500px;
