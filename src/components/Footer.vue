@@ -102,7 +102,6 @@ export default {
                 </div>
             </div>
         </div>
-    </footer>
 	<div class="copyright">
         <div>
 			&copy;年青人眼鏡
@@ -112,6 +111,7 @@ export default {
             <a href="">{{ t("footer-bottom2") }}</a>
         </div>
     </div>
+    </footer>
 </template>
 
 <style lang="scss" scoped>
