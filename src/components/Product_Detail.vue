@@ -474,13 +474,13 @@ export default {
         h1 {
             text-align: center;
             color: #e15b64;
-            animation-name: example;
+            animation-name: textColor;
             animation-delay: .5s;
             animation-duration: 2.5s;
             animation-iteration-count: infinite;
         }
     }
-    @keyframes example {
+    @keyframes textColor {
         0%   {color: #e15b64;}
         33%  {color: #f8b26a;}
         66%  {color: #abbd81;}

@@ -73,6 +73,12 @@ const routes = [
     component: () => import('../views/LoginView.vue'),
   },
   {
+    // 登入後的會員中心
+    path: '/member',
+    name: 'member',
+    component: () => import('../views/MemberView.vue'),
+  },
+  {
     path: '/about1',
     name: 'about',
     component: () => import('../views/AboutView.vue'),

@@ -18,7 +18,6 @@ export default {
 
         onMounted(() => {
             msgName = document.querySelectorAll(".errorMsg");
-            console.log(msgName)
             $('.code').createCode({
                 len: 5
             });

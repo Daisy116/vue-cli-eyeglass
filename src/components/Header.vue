@@ -10,6 +10,12 @@ export default {
 	const routerArr = ["/product/F0001", "/product/F0002"];
 	const route = useRoute();
 	const router = useRouter();
+	
+	const isLogin = ref(false);
+	
+	if (localStorage.getItem("userData")) {
+		isLogin.value = true;
+	}
 
 	// 使用useI18n實作語系切換
 	const { t, locale } = useI18n();
@@ -51,10 +57,6 @@ export default {
 	}
 	);
 
-	// const router = computed(() => {
-	// 	return route.path;
-	// });
-
 	// 用watch監控是否切換了語系
 	watch(locale, (newlocale) => {
 		localStorage.setItem("locale", newlocale);
@@ -64,7 +66,7 @@ export default {
 	return {
 		route,
 		t, locale,
-		isSearch,
+		isSearch, isLogin,
 		goTop, goSearch, closeCollapse
 	};
   }
@@ -134,7 +136,8 @@ export default {
 		<!-- 右邊[登入/語系/搜尋]功能 -->
         <ul class="pc-login" v-show="isSearch">
             <li>
-				<router-link to="/login">{{ t("navbar-login") }}</router-link>
+				<router-link v-if="!isLogin" to="/login">{{ t("navbar-login") }}</router-link>
+				<router-link v-if="isLogin" to="/member">會員中心</router-link>
             </li>
             <li class="language">
 				<select v-model="locale">
