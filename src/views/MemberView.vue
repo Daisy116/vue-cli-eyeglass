@@ -1,37 +1,37 @@
 <script>
 import { onMounted, ref, watch } from 'vue';
-export default {
-    setup() {
-        // 原始(以及要儲存的資料)
-        const userData = ref(JSON.parse(localStorage.getItem("userData")));
-        // 編輯中的資料
-        const modifyData = ref("");
+import Myfavorite from "@/components/Myfavorite.vue";
 
+export default {
+    components: {
+        Myfavorite
+    },
+    setup() {
+        const userData = ref(JSON.parse(localStorage.getItem("userData")));  // 原始(以及要儲存的資料)
+        const modifyData = ref("");  // 編輯中的資料
+
+        const page = ref("1");  // 1代表會員資料，2代表我的收藏，3代表購物車清單
         const mode = ref("0");  // 1代表修改會員資料，2代表修改密碼
+        const notModifyMode = ref(null);
+        const modifyMode = ref(null);
+        const sexData = ref(null);
+        const hint = ref(null);
+        const sideBar = ref(null);
 
         let ul_box = null;
-        let modify_div = null;
-        let buttom_div = null;
         let input = null;
-        let radio = null;
         let label = null;
-        let span = null;
 
         onMounted(() => {
+            // 從userData複製一個新物件，用來存編輯中、未儲存的資料
             modifyData.value = Object.assign({}, userData.value);
 
             input = document.querySelectorAll("input[type=text]");
-            radio = document.querySelector(".sex-group");
             label = document.querySelectorAll(".sex-group label");
-            span = document.querySelector("#hint");
-
             ul_box = document.querySelectorAll(".member-list");
+            
             ul_box[1].style.display = "none";
-
-            modify_div = document.querySelector(".modify-mode");
-            modify_div.style.display = "none";
-
-            buttom_div = document.querySelector(".bottom-wrap");
+            modifyMode.value.style.display = "none";
         });
 
         // 判斷目前是哪種模式，變動<h1>的文字
@@ -44,7 +44,11 @@ export default {
                 document.querySelector("#title").innerText = "修改密碼";
                 return;
             }
-            document.querySelector("#title").innerText = "會員資料";
+            if (item == 0) {
+                document.querySelector("#title").innerText = "會員資料";
+            }
+
+            document.querySelector(".headProgress").style.width = "0%";
         })
 
         function modifyCancel() {
@@ -54,34 +58,40 @@ export default {
             input[3].readOnly = true;
             input[3].classList.remove("modify");
 
-            radio.classList.add("read-only");
+            sexData.value.classList.add("read-only");
             label[0].classList.remove("modify");
             label[1].classList.remove("modify");
 
             // 將編輯模式的按鈕隱藏，打開原本按鈕
-            modify_div.style.display = "none"
-            buttom_div.style.display = "flex";
+            modifyMode.value.style.display = "none"
+            notModifyMode.value.style.display = "flex";
+        }
+        function clearInput() {
+            input[4].value = "";
+            input[5].value = "";
+            input[6].value = "";
         }
 
         // 點擊「修改會員資料」時，將欄位改成not readOnly
         const changeData = () => {
             mode.value = 1;
+            document.querySelector(".headProgress").style.display = "block";
 
             input[2].readOnly = false;  // 姓名欄位可以調整
             input[2].classList.add("modify");
             input[3].readOnly = false;  // 手機號碼欄位可以調整
             input[3].classList.add("modify");
             
-            radio.classList.remove("read-only");
+            sexData.value.classList.remove("read-only");
             label[0].classList.add("modify");
             label[1].classList.add("modify");
 
             // 將原本按鈕隱藏，打開編輯模式的按鈕
-            buttom_div.style.display = "none";
-            modify_div.style.display = "block";
+            notModifyMode.value.style.display = "none";
+            modifyMode.value.style.display = "block";
 
-            span.innerText = "* 顯示綠色的欄位代表可編輯。";
-            span.style.color = "darkgreen";
+            hint.value.innerText = "* 顯示綠色的欄位代表可編輯。";
+            hint.value.style.color = "darkgreen";
         }
         // 點擊「返回(取消)」按鈕
         const changeCancel = () => {
@@ -105,69 +115,104 @@ export default {
                 userData.value.tel = modifyData.value.tel;
                 userData.value.sex = modifyData.value.sex;
 
-                span.innerText = "* 修改成功，儲存中請稍候";
-                span.style.color = "darkgreen";
+                // 用localStorage儲存會員資料
+                localStorage.setItem("userData", JSON.stringify(userData.value));
+                
+
+                hint.value.innerText = "* 修改成功，儲存中請稍候";
+                hint.value.style.color = "darkgreen";
 
                 // 啟動進度條transition
-                document.querySelector(".headProgress").style.width = "100%"
+                document.querySelector(".headProgress").style.display = "block";
+                document.querySelector(".headProgress").style.width = "100%";
+
+                setTimeout(() => {
+                    modifyCancel();
+                    mode.value = 0;
+                    document.querySelector("#title").innerText = "會員資料";
+                    document.querySelector(".headProgress").style.display = "none";
+                    document.querySelector(".headProgress").style.width = "0%"
+                }, 1500);
             }
 
 
             // 更改密碼的部分
             if (mode.value == 2) {
                 if (!input[4].value || !input[5].value || !input[6].value) {
-                    span.innerText = "* 欄位不得為空";
-                    span.style.color = "red";
+                    hint.value.innerText = "* 欄位不得為空";
+                    hint.value.style.color = "red";
                     return;
                 }
                 if (input[4].value != userData.value.pwd) {
-                    span.innerText = "* 舊密碼輸入錯誤";
-                    span.style.color = "red";
+                    hint.value.innerText = "* 舊密碼輸入錯誤";
+                    hint.value.style.color = "red";
                     return;
                 }
                 if (input[5].value != input[6].value) {
-                    span.innerText = "* 新舊密碼不一致";
-                    span.style.color = "red";
+                    hint.value.innerText = "* 新舊密碼不一致";
+                    hint.value.style.color = "red";
                     return;
                 }
-                span.innerText = "* 修改成功，儲存中請稍候";
-                span.style.color = "darkgreen";
+                hint.value.innerText = "* 修改成功，儲存中請稍候";
+                hint.value.style.color = "darkgreen";
 
                 // 啟動進度條transition
-                document.querySelector(".headProgress").style.width = "100%"
-
-                // 會員資料ul隱藏，密碼ul打開
-                ul_box[0].style.display = "block";
-                ul_box[1].style.display = "none";
+                document.querySelector(".headProgress").style.display = "block";
+                document.querySelector(".headProgress").style.width = "100%";
 
                 userData.value.pwd = input[5].value;
-            }
 
-            setTimeout(() => {
-                modifyCancel();
-                document.querySelector(".headProgress").style.display = "none"
-            }, 1500);
+                // 用localStorage儲存會員資料
+                localStorage.setItem("userData", JSON.stringify(userData.value));
+                
+                setTimeout(() => {
+                    mode.value = 0;
+                    modifyCancel();
+                    // 會員資料ul隱藏，密碼ul打開
+                    ul_box[0].style.display = "block";
+                    ul_box[1].style.display = "none";
+                    
+                    document.querySelector("#title").innerText = "會員資料";
+                    document.querySelector(".headProgress").style.display = "none";
+                    document.querySelector(".headProgress").style.width = "0%"
+                }, 1500);
+            }
         }
 
         // 點擊「修改密碼」按鈕
         const changePwd = () => {
             mode.value = 2;
+            document.querySelector(".headProgress").style.display = "block";
+
+            // 清空input裡的文字
+            clearInput();
 
             // 會員資料ul隱藏，密碼ul打開
             ul_box[0].style.display = "none";
             ul_box[1].style.display = "block";
 
             // 將編輯模式的按鈕隱藏，打開原本按鈕
-            modify_div.style.display = "block";
-            buttom_div.style.display = "none";
+            modifyMode.value.style.display = "block";
+            notModifyMode.value.style.display = "none";
 
-            span.innerText = "";
+            hint.value.innerText = "";
+        }
+
+        function changePage(num, e) {
+            // 取得sideBar裡面所有的<li>
+            sideBar.value.childNodes[0].childNodes.forEach(element => {
+                element.classList.remove("active");
+            });
+            e.currentTarget.classList.add("active");
+
+            page.value = num;
         }
 
         return {
             userData, modifyData,
-            changeData, changeCancel, changeComfirm,
-            changePwd
+            notModifyMode, modifyMode, sexData, hint, 
+            changeData, changePwd, changeCancel, changeComfirm,
+            page, changePage, sideBar
         }
     }
 }
@@ -177,27 +222,26 @@ export default {
     <div class="blank"></div>
     <div class="headProgress"></div>
 
-    <div class="sidebar">
+    <div ref="sideBar" class="sidebar">
         <ul>
-            <li class="active">
-                <a href="">會員資料</a>
+            <li @click="changePage(1, $event)" class="active">
+                <a href="javascript:;">會員資料</a>
             </li>
-            <li>
-                <a href="">我的收藏</a>
+            <li @click="changePage(2, $event)">
+                <a href="javascript:;">我的收藏</a>
             </li>
-            <li>
-                <a href="">購物車清單</a>
+            <li @click="changePage(3, $event)">
+                <a href="javascript:;">購物車清單</a>
             </li>
-            <li>
-                <a href="">登出</a>
+            <li @click="changePage(4, $event)">
+                <a href="javascript:;">登出</a>
             </li>
         </ul>
     </div>
 
-    <div class="container">
+    <Myfavorite v-if="page == 2" />
+    <div v-if="page == 1" class="container">
         <h1 id="title">會員資料</h1>
-        <!-- check seesion資料：{{ userData }} <br />
-        check 更改中資料：{{ modifyData }} -->
 
         <ul class="member-list">
             <li>
@@ -209,7 +253,7 @@ export default {
                 <input type="text" name="Name" v-model.lazy="modifyData.name" readonly="">
             </li>
             <li>
-                <div class="sex-group read-only">
+                <div ref="sexData" class="sex-group read-only">
                     <div>
                         <input type="radio" id="radio1" name="sex" value="M" v-model="modifyData.sex" readonly>
                         <label for="radio1">男性</label>
@@ -239,7 +283,7 @@ export default {
                 <input type="text" placeholder="請再次輸入新密碼">
             </li>
         </ul>
-        <div class="bottom-wrap">
+        <div ref="notModifyMode" class="bottom-wrap">
             <div class="left-bottom">
                 <button type="button" name="fb">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
@@ -259,8 +303,8 @@ export default {
                 <a @click="changePwd">修改密碼</a>
             </div>
         </div>
-        <div class="modify-mode">
-            <span id="hint">* 顯示綠色的欄位代表可編輯。</span>
+        <div ref="modifyMode" class="modify-mode">
+            <span ref="hint">* 顯示綠色的欄位代表可編輯。</span>
             <a @click="changeCancel">返回(取消)</a>
             <a @click="changeComfirm">確定修改</a>
         </div>
