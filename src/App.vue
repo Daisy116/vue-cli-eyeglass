@@ -102,7 +102,7 @@ export default {
 		position: fixed;
 		right: 20px;
 		bottom: 90px;
-		z-index: 99;
+		z-index: 102;
 
 		display: flex;
 		flex-direction: column;
