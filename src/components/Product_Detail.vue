@@ -7,13 +7,16 @@ import axios from "axios";
 export default {
     setup() {
         const route = useRoute();
-        const product = reactive({});
-        const amount = ref(0);
-        const isLoading = ref(true);
+
+        const product = reactive({});  // 要呈現到畫面上的資料
+        const amount = ref(1);         // 紀錄商品購買數量
+        const isLoading = ref(true);   // 資料未取回之前，放loading SVG圖
+        const isLogin = ref(JSON.parse(localStorage.getItem("isLogin")));    // 目前的登入狀態
+        const myCart = ref(JSON.parse(localStorage.getItem("myCart")));     // 取得購物車清單
         const isData = ref(true);
         let data = null;
+
         const { t, locale } = useI18n();
- 
         watch(locale, (newlocale) => {
             localStorage.setItem("locale", newlocale);
 
@@ -141,15 +144,51 @@ export default {
         }
         const minus = () => {
             amount.value--;
-            if (amount.value < 0 ) {
-                amount.value = 0;
+            if (amount.value < 1 ) {
+                amount.value = 1;
             }
+        }
+        // 登入狀態下，點擊「加入購物車」按鈕
+        const saveAmount = () => {            
+            // 先判斷 myCart 是否為null
+            if (!myCart.value) {
+                let obj = {};
+                obj[route.params.pid] = amount.value;
+                myCart.value = [];
+                myCart.value.push(obj);
+                return;
+            }
+            if (myCart.value) {
+                let isFind = true;
+                
+                // 再判斷 myCart 裡面的值是否和當前商品一樣
+                myCart.value.forEach((item, i) => {
+                    if (Object.keys(item) == route.params.pid) {
+                        let obj = {};
+                        obj[route.params.pid] = Object.values(item)[0] + amount.value;
+                        myCart.value[i] = obj;
+                        isFind = false;
+                        return;
+                    }
+                })
+
+                // 當 myCart 裡面的值都不一樣，則push新的商品進去
+                if (isFind) {
+                    let obj = {};
+                    obj[route.params.pid] = amount.value;
+                    myCart.value.push(obj);
+                }
+            }
+
+            // 用localStorage儲存我的收藏
+            localStorage.setItem("myCart", JSON.stringify(myCart.value));
+            alert("已成功加入購物車");
         }
 
         return { 
             product, amount, 
-            isLoading, isData,
-            changeImg, minus, plus,
+            isLoading, isData, isLogin,
+            changeImg, minus, plus, saveAmount,
             t, locale,
         };
     }
@@ -197,7 +236,8 @@ export default {
                     </svg>
                     {{ t("product-favorite") }}
                 </button>
-                <button>{{ t("product-buy") }}</button>
+                <button v-if="!isLogin">{{ t("product-buy") }}</button>
+                <button v-if="isLogin" @click="saveAmount">{{ t("product-buy2") }}</button>
             </div>
 
             <div class="accordion" id="accordionExample">
