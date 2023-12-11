@@ -11,11 +11,7 @@ export default {
 	const route = useRoute();
 	const router = useRouter();
 	
-	const isLogin = ref(false);
-	
-	if (localStorage.getItem("userData")) {
-		isLogin.value = true;
-	}
+	const isLogin = ref(JSON.parse(localStorage.getItem("isLogin")));
 
 	// 使用useI18n實作語系切換
 	const { t, locale } = useI18n();

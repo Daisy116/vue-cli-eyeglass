@@ -175,9 +175,14 @@ export default {
 
                 // 用localStorage儲存會員資料
                 localStorage.setItem("userData", JSON.stringify(formData));
+                localStorage.setItem("isLogin", true);
                 
-                // 雖然有導倒首頁，但沒有自動變會員中心.....???
-                router.push('/')
+
+                // 倒轉到首頁之後，刷新頁面(重整isLogin狀態)
+                router.push('/');
+                setTimeout(()=>{
+                    location.reload();
+                },100)
             }
         }
 

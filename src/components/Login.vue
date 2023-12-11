@@ -5,10 +5,13 @@ import { reg_phoneType2, reg_pwdCommon } from "@/lib/validate.js";
 import { createCode } from "@/lib/jQueryfn";
 
 import { onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
     setup() {
+        const router = useRouter();
         let msgName = null;
+        const verifyData = ref(null)
         const verify = ref(false);
         const isForget = ref(false);
         const formData = reactive({
@@ -115,25 +118,23 @@ export default {
             msgName[1].classList.remove("error");
         }
         const verifyBlur = () => {
-            const input = document.querySelector("input[name='Verify']");
-
             // 驗證是否為空值
-            if (input.value == "") {
-                input.classList.add("error");
+            if (verifyData.value.value == "") {
+                verifyData.value.classList.add("error");
                 msgName[2].innerText = "* 不得為空";
                 msgName[2].classList.add("error");
                 verify.value = false;
                 return;
             }
             // 驗證內容是否正確
-            if (input.value.toLowerCase() != $('.code').children('input').val().toLowerCase()) {
-                input.classList.add("error");
+            if (verifyData.value.value.toLowerCase() != $('.code').children('input').val().toLowerCase()) {
+                verifyData.value.classList.add("error");
                 msgName[2].innerText = "* 驗證碼輸入錯誤！";
                 msgName[2].classList.add("error");
                 verify.value = false;
                 return;
             }
-            input.classList.remove("error");
+            verifyData.value.classList.remove("error");
             msgName[2].classList.remove("error");
             verify.value = true;
         }
@@ -141,14 +142,34 @@ export default {
             isForget.value = true;
         }
         const submit = () => {
+            let userData = JSON.parse(localStorage.getItem("userData"));
+            
             telBlur('mobile');
             pwdBlur();
             verifyBlur();
-            if (reg_phoneType2(formData.tel) && reg_pwdCommon(formData.pwd) && verify.value) {
-                document.querySelector(".bi-check-circle-fill").classList.remove("display-none");
-                console.log("手機號碼：", formData.tel);
-                console.log("密碼：", formData.pwd);
+
+            // 輸入框沒過驗證，就不會往下驗證
+            if (!reg_phoneType2(formData.tel) || !reg_pwdCommon(formData.pwd) || !verify.value) return;
+
+            console.log("userData", userData)
+            if (!userData || formData.tel != userData.tel) {
+                alert("無此帳號，請先註冊！")
+                return;
             }
+            if (formData.pwd != userData.pwd) {
+                alert("密碼錯誤，是否忘記密碼？")
+                return;
+            }
+                
+            
+            // 成功登入！
+            localStorage.setItem("isLogin", true);
+
+            // 倒轉到首頁之後，刷新頁面(重整isLogin狀態)
+            router.push('/');
+            setTimeout(()=>{
+                location.reload();
+            },100)
         }
         const send = () => {
             telBlur('phone');
@@ -160,7 +181,7 @@ export default {
         }
 
         return {
-            formData, 
+            formData, verifyData,
             isForget, goForget,
             toFB, toLine, 
             telBlur, pwdBlur, verifyBlur,
@@ -204,14 +225,13 @@ export default {
         </ul>
         
         <span class="errorMsg">* 驗證碼內容錯誤！</span>
-        <input @blur="verifyBlur" type="text" name="Verify" class="input-code" placeholder="驗證碼">
+        <input ref="verifyData" @blur="verifyBlur" type="text" name="Verify" class="input-code" placeholder="驗證碼">
         <span class="code" title='點擊切換'></span>
 
         <div class="pwd-wrap">
             <a @click="goForget" href="javascript:;">忘記密碼？</a>
         </div>
         <a @click="submit" name="Logins">登入會員</a>
-        <i class="bi bi-check-circle-fill display-none"></i>
     </div>
     <div v-show="isForget" class="forget-wrap">
         <h1>忘記密碼</h1>
@@ -323,30 +343,6 @@ export default {
         width: 50%;
         margin-right: 10px;
         margin-bottom: 16px;
-    }
-    .bi-check-circle-fill {
-        width: 100%;
-        height: 600px;
-        font-size: 58px;
-        color: green;
-        text-align: center;
-        transform: translateY(-150px);
-        
-        position: absolute;
-        top: 0;
-        background-color: white;
-        padding: 30px;
-
-        &.display-none {
-            display: none;
-        }
-        &:after {
-            content: '成功登入(功能待補)';
-            display: block;
-            width: 100%;
-            font-style: normal;
-            transform: translateY(-20px);
-        }
     }
     .forget-wrap {
         transform: translateY(-145px);

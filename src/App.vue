@@ -17,15 +17,20 @@ export default {
 		// isSearch控制PC的放大鏡搜尋畫面
 		const isSearch = ref(true);
 
+		if (!localStorage.getItem("isLogin")) {
+			// 預設登入狀態(isLogin)為false
+			localStorage.setItem("isLogin", false);
+		}
+
 		const goTop = () => {
 			// 使用jQuery的scrollTop實作置頂功能，並用animate方法慢慢往上移
 			$("html, body").animate({scrollTop: 0}, 400);
 		};
-		const openModal = () => {
-			// console.log("打開菜單")
-		};
 		const goSearch = () => {
 			isSearch.value = !isSearch.value;
+		};
+		const openModal = () => {
+			// console.log("打開菜單")
 		};
 
 		// 用watch監控是否切換了語系
