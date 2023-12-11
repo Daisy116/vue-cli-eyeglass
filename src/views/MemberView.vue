@@ -1,14 +1,20 @@
 <script>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, nextTick } from 'vue';
 import Myfavorite from "@/components/Myfavorite.vue";
+import ShoppingCart from "@/components/ShoppingCart.vue";
+import { useRouter } from 'vue-router';
 
 export default {
     components: {
-        Myfavorite
+        Myfavorite,
+        ShoppingCart
     },
     setup() {
+        const router = useRouter();
         const userData = ref(JSON.parse(localStorage.getItem("userData")));  // 原始(以及要儲存的資料)
         const modifyData = ref("");  // 編輯中的資料
+        const dataList = ref(null);
+        const pwdList = ref(null);
 
         const page = ref("1");  // 1代表會員資料，2代表我的收藏，3代表購物車清單
         const mode = ref("0");  // 1代表修改會員資料，2代表修改密碼
@@ -18,7 +24,7 @@ export default {
         const hint = ref(null);
         const sideBar = ref(null);
 
-        let ul_box = null;
+        // let ul_box = null;
         let input = null;
         let label = null;
 
@@ -28,9 +34,8 @@ export default {
 
             input = document.querySelectorAll("input[type=text]");
             label = document.querySelectorAll(".sex-group label");
-            ul_box = document.querySelectorAll(".member-list");
-            
-            ul_box[1].style.display = "none";
+
+            pwdList.value.style.display = "none";
             modifyMode.value.style.display = "none";
         });
 
@@ -71,20 +76,28 @@ export default {
             input[5].value = "";
             input[6].value = "";
         }
+        async function vIF() {
+            // 因為有用v-if切換頁面，所以需要使用Vue的nextTick()讓 DOM 更新
+            await nextTick()
+            input = document.querySelectorAll("input[type=text]");
+            label = document.querySelectorAll(".sex-group label");
+
+            input[2].readOnly = false;  // 姓名欄位可以調整
+            input[2].classList.add("modify");
+            input[3].readOnly = false;  // 手機號碼欄位可以調整
+            input[3].classList.add("modify");
+
+            sexData.value.classList.remove("read-only");
+            label[0].classList.add("modify");
+            label[1].classList.add("modify");
+        }
 
         // 點擊「修改會員資料」時，將欄位改成not readOnly
         const changeData = () => {
             mode.value = 1;
             document.querySelector(".headProgress").style.display = "block";
 
-            input[2].readOnly = false;  // 姓名欄位可以調整
-            input[2].classList.add("modify");
-            input[3].readOnly = false;  // 手機號碼欄位可以調整
-            input[3].classList.add("modify");
-            
-            sexData.value.classList.remove("read-only");
-            label[0].classList.add("modify");
-            label[1].classList.add("modify");
+            vIF();            
 
             // 將原本按鈕隱藏，打開編輯模式的按鈕
             notModifyMode.value.style.display = "none";
@@ -98,8 +111,8 @@ export default {
             mode.value = 0;
 
             // 將密碼div隱藏，打開會員資料div
-            ul_box[1].style.display = "none";
-            ul_box[0].style.display = "block";
+            pwdList.value.style.display = "none";
+            dataList.value.style.display = "block";
             modifyCancel();
 
             modifyData.value.name = userData.value.name;
@@ -169,8 +182,8 @@ export default {
                     mode.value = 0;
                     modifyCancel();
                     // 會員資料ul隱藏，密碼ul打開
-                    ul_box[0].style.display = "block";
-                    ul_box[1].style.display = "none";
+                    dataList.value.style.display = "block";
+                    pwdList.value.style.display = "none";
                     
                     document.querySelector("#title").innerText = "會員資料";
                     document.querySelector(".headProgress").style.display = "none";
@@ -188,8 +201,8 @@ export default {
             clearInput();
 
             // 會員資料ul隱藏，密碼ul打開
-            ul_box[0].style.display = "none";
-            ul_box[1].style.display = "block";
+            dataList.value.style.display = "none";
+            pwdList.value.style.display = "block";
 
             // 將編輯模式的按鈕隱藏，打開原本按鈕
             modifyMode.value.style.display = "block";
@@ -206,10 +219,22 @@ export default {
             e.currentTarget.classList.add("active");
 
             page.value = num;
+            
+            if (num == 4) {
+                localStorage.setItem("isLogin", false);
+                alert("已登出");
+
+                // 倒轉到首頁之後，刷新頁面(重整isLogin狀態)
+                router.push('/');
+                setTimeout(()=>{
+                    location.reload();
+                },100)
+            }
         }
 
         return {
             userData, modifyData,
+            dataList, pwdList,
             notModifyMode, modifyMode, sexData, hint, 
             changeData, changePwd, changeCancel, changeComfirm,
             page, changePage, sideBar
@@ -240,10 +265,11 @@ export default {
     </div>
 
     <Myfavorite v-if="page == 2" />
+    <ShoppingCart v-if="page == 3" />
     <div v-if="page == 1" class="container">
         <h1 id="title">會員資料</h1>
 
-        <ul class="member-list">
+        <ul ref="dataList" class="member-list">
             <li>
                 <label for="">會員編號</label>
                 <input type="text" :value="userData.id" readonly="">
@@ -269,7 +295,7 @@ export default {
                 <input type="text" v-model.lazy="modifyData.tel" readonly="">
             </li>
         </ul>
-        <ul class="member-list">
+        <ul ref="pwdList" class="member-list" style="display: none;">
             <li class="old-pwd">
                 <label for="">舊密碼</label>
                 <input type="text" placeholder="請輸入舊密碼">
@@ -308,6 +334,8 @@ export default {
             <a @click="changeCancel">返回(取消)</a>
             <a @click="changeComfirm">確定修改</a>
         </div>
+    </div>
+    <div v-if="page == 4" class="container">
     </div>
 </template>
 
@@ -461,6 +489,7 @@ export default {
             }
         }
         .modify-mode {
+            display: none;
             text-align: right;
 
             span {
