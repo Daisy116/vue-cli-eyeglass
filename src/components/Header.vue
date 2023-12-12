@@ -237,9 +237,10 @@ export default {
 					</div>
 				</li>
 			</ul>
-			<router-link to="/login" @click="closeCollapse" class="login">
+			<router-link v-if="!isLogin" to="/login" @click="closeCollapse" class="login">
 				{{ t("navbar-login-H5") }}
 			</router-link>
+			<router-link v-if="isLogin" to="/member" @click="closeCollapse" class="login">會員中心</router-link>
 			</div>
 		</div>
 	</nav>

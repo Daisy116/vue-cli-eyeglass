@@ -69,7 +69,14 @@ export default {
 
             // 將編輯模式的按鈕隱藏，打開原本按鈕
             modifyMode.value.style.display = "none"
-            notModifyMode.value.style.display = "flex";
+            
+            if (screen.width < 490) {
+                // 若當前螢幕大小為手機版
+                notModifyMode.value.style.display = "block";
+            } else {
+                // 若當前螢幕大小為PC版
+                notModifyMode.value.style.display = "flex";
+            }
         }
         function clearInput() {
             input[4].value = "";
@@ -112,7 +119,15 @@ export default {
 
             // 將密碼div隱藏，打開會員資料div
             pwdList.value.style.display = "none";
-            dataList.value.style.display = "block";
+            
+            if (screen.width < 490) {
+                // 若當前螢幕大小為手機版
+                dataList.value.style.display = "flex";
+            } else {
+                // 若當前螢幕大小為PC版
+                dataList.value.style.display = "block";
+            }
+
             modifyCancel();
 
             modifyData.value.name = userData.value.name;
@@ -530,6 +545,93 @@ export default {
     @media screen and (min-width: 0px) and (max-width: 490px) {
         .blank {
             height: 40px;
+        }
+        .sidebar {
+            // display: none;
+            top: 145px;
+
+            ul {
+                display: flex;
+            }
+            li {
+                width: 110px;
+                border: 1px solid burlywood;
+                border-top: solid 5px transparent;
+                text-align: center;
+
+                &.active {
+                    border-color: burlywood;
+                }
+                &:last-child {
+                    width: auto;
+                    height: 45px;
+                    margin-top: 0;
+                    transform: translate(0px, -50px);
+                    border: 0;
+
+                    a {
+                        display: initial;
+                        color: red;
+                    }
+                }
+                a {
+                    padding: 10px;
+                    white-space: nowrap;
+                }
+            }
+        }
+        .headProgress {
+            height: 15px;
+        }
+        .container {
+            min-height: fit-content;
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-bottom: 10px;
+
+            a {
+                width: 170px;
+            }
+            .member-list {
+                margin: 60px 0 20px 0;
+                border-color: #f4d5d5;
+                display: flex;
+                flex-direction: column;
+
+                li {
+                    margin: 0 0px 20px 0;
+
+                    &:nth-child(3) {
+                        order: -1;
+                    }
+                    .sex-group {
+                        height: auto;
+                    }
+                }
+            }
+            .bottom-wrap {
+                display: block;
+
+                .left-bottom {
+                    font-size: 15px;
+                    margin-bottom: 15px;
+
+                    button {
+                        width: 170px 
+                    }
+                }
+                .right-bottom {
+                    text-align: left;
+                }
+            }
+            .modify-mode {
+                span {
+                    display: block;
+                    width: 100%;
+                    margin-bottom: 13px;
+                    text-align: left;
+                }
+            }
         }
     }
 </style>

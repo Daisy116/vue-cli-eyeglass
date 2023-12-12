@@ -257,4 +257,57 @@ export default {
             }
         }
     }
+
+    // 手機版
+    @media screen and (min-width: 0px) and (max-width: 490px) {
+        p {
+            margin-bottom: 0;
+        }
+        .wrap {
+            margin-left: 0;
+            padding-bottom: 0;
+
+            h1 {
+                padding-left: 15px;
+            }
+            h4 {
+                font-size: 18px;
+                margin-bottom: 0;
+            }
+            .main-list {
+                margin-top: 60px;
+
+                .loading {
+                    max-height: 500px;
+                    padding: 100px 0;
+                }
+                .product-box {
+                    grid-template-columns: 1fr 1fr;
+
+                    >li {
+                        max-width: 180px;
+                        max-height: 323px;
+                    }
+                    svg {
+                        width: 25px;
+                        height: 25px;
+                        top: 10px;
+                        right: 10px;
+                    }
+                    .content {
+                        padding: 10px;
+                        
+                        p {
+                            display: flex;
+                            justify-content: space-between;
+
+                            span:last-child {
+                                font-size: 16px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 </style>

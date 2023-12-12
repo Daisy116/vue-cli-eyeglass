@@ -35,8 +35,6 @@ export default {
                 });
                 product.data = [...arr];
                 isLoading.value = false;
-
-                console.log("onMounted結束後123456", myCart.value)
             })
         });
         
@@ -205,17 +203,17 @@ export default {
                     <td>
                         <i @click="deleteItem(item, $event)" class="bi bi-x-lg"></i>
                     </td>
-                    <td>
+                    <td data-th="商品">
                         <img :src="require(`../assets/images/${item.img}`)">
                         {{ item.title }}
                     </td>
-                    <td>{{ item.price }}</td>
-                    <td>
+                    <td data-th="單價">{{ item.price }}</td>
+                    <td data-th="購買數量">
                         <button @click="minus(idx)">-</button>
                         <input type="text" :value="item.buy">
                         <button @click="plus(idx)">+</button>
                     </td>
-                    <td>{{ item.price.slice(4) * item.buy }}</td>
+                    <td data-th="總計金額">{{ item.price.slice(4) * item.buy }}</td>
                 </tr>
                 <tr class="last-tr">
                     <td ref="cartCount" colspan="2">共 {{ product.data.length }} 件商品</td>
@@ -333,5 +331,93 @@ export default {
             }
         }
        
+    }
+
+    // 手機版
+    @media screen and (min-width: 0px) and (max-width: 490px) {
+        .wrap {
+            margin-left: 0;
+            padding: 30px 15px 10px 15px;
+
+            table {
+                margin-top: 60px;
+
+                svg {
+                    width: 300px;
+                    height: 400px;
+                }
+                thead {
+                    display: none;
+                }
+                tbody {
+                    tr {
+                        border-bottom: 1px solid #9BA2AD;
+                        position: relative;
+
+                        td {
+                            display: flex;
+                            align-items: center;
+                            border: none;
+                            padding: 5px 0;
+
+                            &::before {
+                                content: attr(data-th);
+                                width: 100px;
+                                color: #0E387B;
+                                font-weight: bolder;
+                                text-align: left;
+                            }
+                            &:first-child {
+                                margin-bottom: 130px;
+                                margin-right: 20px;
+                                float: right;
+                            }
+                            &:nth-child(2) {
+                                clear: both;
+                            }
+                            &:nth-child(5) {
+                                border: 0;
+                            }
+                        }
+                        td+td {
+                            border-bottom: 1px dashed #0E387B;
+                        }
+                    }
+                    img {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        transform: translateX(25%);
+                        z-index: -1;
+                    }
+                    i {
+                        text-shadow: 0 0 2px rgb(255, 0, 0);
+                        color: red;
+                    }
+                    .last-tr {
+                        box-shadow: 3px 3px 5px #180629;
+
+                        td {
+                            padding: 5px 0;
+                            justify-content: center;
+
+                            &::before {
+                                width: 0;
+                            }
+                            &:nth-child(1) {
+                                padding-left: 0;
+                                margin: auto;
+                                float: none;
+                            }
+                        }
+                        .pay {
+                            width: 9rem;
+                            border-radius: 8px;
+                            font-size: 23px;
+                        }
+                    }
+                }
+            }
+        }
     }
 </style>
