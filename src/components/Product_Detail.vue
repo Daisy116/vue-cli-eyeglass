@@ -13,9 +13,12 @@ export default {
         const isLoading = ref(true);   // 資料未取回之前，放loading SVG圖
         const isLogin = ref(JSON.parse(localStorage.getItem("isLogin")));    // 目前的登入狀態
         const myCart = ref(JSON.parse(localStorage.getItem("myCart")));     // 取得購物車清單
+        const favoriteData = ref(JSON.parse(localStorage.getItem("myFavorite")));  // 原始(以及要儲存的資料)
         const isData = ref(true);
+        const favorite = ref(null);    // 綁定「加入收藏」按鈕
         let data = null;
 
+        // 語系切換
         const { t, locale } = useI18n();
         watch(locale, (newlocale) => {
             localStorage.setItem("locale", newlocale);
@@ -100,8 +103,15 @@ export default {
                 isData.value = !isData.value;
             })
             .catch(error => {
+                // 只將loading動畫關掉(會呈現no data動畫)
                 isLoading.value = !isLoading.value;
             })
+
+            // 若當下商品在我的收藏清單，調整button文字和顏色
+            if (favoriteData.value.includes(route.params.pid)) {
+                favorite.value.childNodes[1].data = "已加入收藏";
+                favorite.value.classList.add("favorite");
+            }
         });
 
         const nameFID = () => {
@@ -148,6 +158,36 @@ export default {
                 amount.value = 1;
             }
         }
+        const saveFavorite = (e) => {
+            // 若尚未登入
+            if (!isLogin) {
+                alert("請先登入");
+                return;
+            }
+            // 若 favoriteData為null
+            if (!favoriteData.value) {
+                localStorage.setItem("myFavorite", JSON.stringify([route.params.pid]));
+                return;
+            }
+            // 若 favoriteData 裡已有該商品，點擊後移除我的收藏
+            if (favoriteData.value.includes(route.params.pid)) {
+                // 調整「加入收藏」按鈕的樣式
+                favorite.value.childNodes[1].data = "加入收藏";
+                favorite.value.classList.remove("favorite");
+
+                // 移除localStorage裡的資料
+                favoriteData.value = favoriteData.value.filter(item => item != route.params.pid)
+                localStorage.setItem("myFavorite", JSON.stringify(favoriteData.value));
+                return;
+            }
+
+            // 若 favoriteData 裡沒有該商品，點擊後加入我的收藏
+            favoriteData.value.push(route.params.pid)
+            localStorage.setItem("myFavorite", JSON.stringify(favoriteData.value));
+            // 調整「加入收藏」按鈕的樣式
+            favorite.value.childNodes[1].data = "已加入收藏";
+            favorite.value.classList.add("favorite");
+        }
         // 登入狀態下，點擊「加入購物車」按鈕
         const saveAmount = () => {            
             // 先判斷 myCart 是否為null
@@ -186,9 +226,9 @@ export default {
         }
 
         return { 
-            product, amount, 
+            product, amount, favorite,
             isLoading, isData, isLogin,
-            changeImg, minus, plus, saveAmount,
+            changeImg, minus, plus, saveFavorite, saveAmount,
             t, locale,
         };
     }
@@ -230,7 +270,7 @@ export default {
                 <span>{{ t("product-total") }}： {{ amount*product.price }}</span>
             </div>
             <div class="btn-wrap">
-                <button>
+                <button ref="favorite" @click="saveFavorite">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart-fill" viewBox="0 0 16 16">
                         <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z"/>
                     </svg>
@@ -442,6 +482,14 @@ export default {
                     }
                     &:hover {
                         background-color: #000;
+                        color: #fff;
+                    }
+                    &.favorite {
+                        color: red;
+                        border-color: red;
+                    }
+                    &.favorite:hover {
+                        background-color: red;
                         color: #fff;
                     }
                 }
