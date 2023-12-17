@@ -13,7 +13,7 @@ export default {
         myFavorite.value = favoriteData.value;
         
         onMounted(() => {
-            axios.get(`https://run.mocky.io/v3/b1a37e38-8c8c-40aa-8482-01fb0d778835`)
+            axios.get(`https://run.mocky.io/v3/d5117fc0-e5a3-42ce-accc-42bdb4f23431`)
             .then(res => {
                 let arr = [];
                 favoriteData.value.forEach(element => {

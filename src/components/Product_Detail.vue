@@ -53,7 +53,7 @@ export default {
         }
 
         onMounted(() => {
-            axios.get(`https://run.mocky.io/v3/b1a37e38-8c8c-40aa-8482-01fb0d778835`)
+            axios.get(`https://run.mocky.io/v3/d5117fc0-e5a3-42ce-accc-42bdb4f23431`)
             // 正式站： https://run.mocky.io/v3/7e69c6fc-8f63-4e22-8087-61901e7922aa
             .then(res => {
                 data = res.data["product-detail"][route.params.pid];
@@ -125,6 +125,43 @@ export default {
                 case "E0001":
                     product.FID = t("navbar-glasses1");
                     break;
+                case "C0001":
+                    product.FID = t("hidden-glasses1");
+                    break;
+                case "C0002":
+                    product.FID = t("hidden-glasses2");
+                    break;
+                case "C0003":
+                    product.FID = t("hidden-glasses3");
+                    break;
+                case "C0004":
+                    product.FID = t("hidden-glasses4");
+                    break;
+                case "C0005":
+                    product.FID = t("hidden-glasses5");
+                    break;
+                case "C0006":
+                    product.FID = t("hidden-glasses6");
+                    break;
+                case "C0007":
+                    product.FID = t("hidden-glasses7");
+                    break;
+                case "C0008":
+                    product.FID = t("hidden-glasses8");
+                    break;
+                case "C0009":
+                    product.FID = t("hidden-glasses9");
+                    break;
+                case "C0010":
+                    product.FID = t("hidden-glasses10");
+                    break;
+                case "C0011":
+                    product.FID = t("hidden-glasses11");
+                    break;
+                case "C0012":
+                    product.FID = t("hidden-glasses12");
+                    break;
+                
                 default:
                     product.FID = "";
                     break;
@@ -376,6 +413,8 @@ export default {
 
             img {
                 width: 100%;
+                height: 600px;
+                object-fit: contain;
             }
         }
         .right-detail {
@@ -417,6 +456,8 @@ export default {
     
                         img {
                             width: 100%;
+                            height: 100%;
+                            object-fit: cover;
                         }
                     }
                 }
@@ -592,6 +633,7 @@ export default {
                 order: 2;
 
                 img {
+                    height: auto;
                     padding: 0 20px;
                 }
                 .content {
