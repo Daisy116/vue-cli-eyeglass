@@ -3,9 +3,13 @@
 import { reg_phoneType2, reg_pwdCommon } from "@/lib/validate.js";
 // 引入圖形驗證碼的JS函式
 import { createCode } from "@/lib/jQueryfn";
+// 使用CryptoJS的AES加密、encUtf8解密
+import AES from 'crypto-js/aes';
+import encUtf8 from 'crypto-js/enc-utf8';
 
 import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
 
 export default {
     setup() {
@@ -142,7 +146,10 @@ export default {
             isForget.value = true;
         }
         const submit = () => {
-            let userData = JSON.parse(localStorage.getItem("userData"));
+            // 解密localStorage裡的會員資料
+            const bytes = AES.decrypt(localStorage.getItem("userData"), '1234AAA');
+            const originalText = bytes.toString(encUtf8);
+            let userData = JSON.parse(originalText);
             
             telBlur('mobile');
             pwdBlur();
@@ -151,7 +158,6 @@ export default {
             // 輸入框沒過驗證，就不會往下驗證
             if (!reg_phoneType2(formData.tel) || !reg_pwdCommon(formData.pwd) || !verify.value) return;
 
-            console.log("userData", userData)
             if (!userData || formData.tel != userData.tel) {
                 alert("無此帳號，請先註冊！")
                 return;

@@ -3,6 +3,9 @@ import { reg_phoneType2, reg_name, reg_pwdCommon } from "@/lib/validate.js";
 import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+// 使用CryptoJS的AES加密
+import AES from 'crypto-js/aes';
+
 export default {
     setup() {
         const router = useRouter();
@@ -167,16 +170,16 @@ export default {
             }
 
             if (reg_phoneType2(formData.tel) && reg_name(formData.name) && reg_pwdCommon(formData.pwd) && formData.pwd2 && formData.ch1 && formData.ch2) {
-                console.log("-------登入成功後的頁面/功能實作中-------")
                 delete formData.pwd2;
                 delete formData.ch1;
                 delete formData.ch2;
                 formData.id = Math.round(Math.random()*1000000);
 
-                // 用localStorage儲存會員資料
-                localStorage.setItem("userData", JSON.stringify(formData));
-                localStorage.setItem("isLogin", true);
-                
+                // 用localStorage儲存加密後的會員資料
+                const ciphertext = AES.encrypt(JSON.stringify(formData), '1234AAA').toString();
+                localStorage.setItem("userData", ciphertext);
+
+                localStorage.setItem("isLogin", true);                
 
                 // 倒轉到首頁之後，刷新頁面(重整isLogin狀態)
                 router.push('/');

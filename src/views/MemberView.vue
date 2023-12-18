@@ -4,6 +4,10 @@ import Myfavorite from "@/components/Myfavorite.vue";
 import ShoppingCart from "@/components/ShoppingCart.vue";
 import { useRouter } from 'vue-router';
 
+// 使用CryptoJS的AES加密、encUtf8解密
+import AES from 'crypto-js/aes';
+import encUtf8 from 'crypto-js/enc-utf8';
+
 export default {
     components: {
         Myfavorite,
@@ -11,7 +15,12 @@ export default {
     },
     setup() {
         const router = useRouter();
-        const userData = ref(JSON.parse(localStorage.getItem("userData")));  // 原始(以及要儲存的資料)
+        
+        // 解密localStorage裡的會員資料
+        const bytes = AES.decrypt(localStorage.getItem("userData"), '1234AAA');
+        const originalText = bytes.toString(encUtf8);
+        const userData = ref(JSON.parse(originalText));
+
         const modifyData = ref("");  // 編輯中的資料
         const dataList = ref(null);
         const pwdList = ref(null);
@@ -24,7 +33,6 @@ export default {
         const hint = ref(null);
         const sideBar = ref(null);
 
-        // let ul_box = null;
         let input = null;
         let label = null;
 
@@ -143,8 +151,9 @@ export default {
                 userData.value.tel = modifyData.value.tel;
                 userData.value.sex = modifyData.value.sex;
 
-                // 用localStorage儲存會員資料
-                localStorage.setItem("userData", JSON.stringify(userData.value));
+                // 用localStorage儲存加密後的會員資料
+                const ciphertext = AES.encrypt(JSON.stringify(userData.value), '1234AAA').toString();
+                localStorage.setItem("userData", ciphertext);
                 
 
                 hint.value.innerText = "* 修改成功，儲存中請稍候";
@@ -190,8 +199,9 @@ export default {
 
                 userData.value.pwd = input[5].value;
 
-                // 用localStorage儲存會員資料
-                localStorage.setItem("userData", JSON.stringify(userData.value));
+                // 用localStorage儲存加密後的會員資料
+                const ciphertext = AES.encrypt(JSON.stringify(userData.value), '1234AAA').toString();
+                localStorage.setItem("userData", ciphertext);
                 
                 setTimeout(() => {
                     mode.value = 0;
