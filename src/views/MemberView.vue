@@ -204,10 +204,11 @@ export default {
                 localStorage.setItem("userData", ciphertext);
                 
                 setTimeout(() => {
-                    mode.value = 0;
                     modifyCancel();
+                    mode.value = 0;
+                    
                     // 會員資料ul隱藏，密碼ul打開
-                    dataList.value.style.display = "block";
+                    dataList.value.style.display = "flex";
                     pwdList.value.style.display = "none";
                     
                     document.querySelector("#title").innerText = "會員資料";
@@ -557,7 +558,6 @@ export default {
             height: 40px;
         }
         .sidebar {
-            // display: none;
             top: 145px;
 
             ul {
@@ -566,17 +566,20 @@ export default {
             li {
                 width: 110px;
                 border: 1px solid burlywood;
-                border-top: solid 5px transparent;
+                margin-top: 4px;
                 text-align: center;
 
                 &.active {
+                    border-top: 5px solid burlywood;
                     border-color: burlywood;
+                    margin-top: 0;
+                    background: none;
                 }
                 &:last-child {
                     width: auto;
                     height: 45px;
                     margin-top: 0;
-                    transform: translate(0px, -50px);
+                    transform: translate(0px, -40px);
                     border: 0;
 
                     a {
@@ -603,7 +606,7 @@ export default {
                 width: 170px;
             }
             .member-list {
-                margin: 60px 0 20px 0;
+                margin: 80px 0 20px 0;
                 border-color: #f4d5d5;
                 display: flex;
                 flex-direction: column;
