@@ -7,16 +7,21 @@ export default {
         const product = reactive({data: {}});  // 放要呈現到畫面上的資料
         const favoriteData = ref(JSON.parse(localStorage.getItem("myFavorite")));  // 我的收藏列表
         const myFavorite = ref([]);            // 暫存的我的收藏
-        const isLoading = ref(true);
+        const isLoading = ref(true);           // 資料未取回之前，放loading SVG圖
+        const isData = ref(true);              // 資料取回若為空，放暫無資料 SVG圖
 
         // 繼承localStorage裡的資料
         myFavorite.value = favoriteData.value;
+        if (!myFavorite.value) {
+            // 若localStorage裡資料為null，設定空陣列
+            myFavorite.value = [];
+        }
         
         onMounted(() => {
             axios.get(`https://run.mocky.io/v3/d5117fc0-e5a3-42ce-accc-42bdb4f23431`)
             .then(res => {
                 let arr = [];
-                favoriteData.value.forEach(element => {
+                myFavorite.value.forEach(element => {
                     res.data["product-detail"][element]["PID"] = element;
                     arr.push(res.data["product-detail"][element]);
                 });
@@ -24,6 +29,10 @@ export default {
 
                 // 將loading動畫關掉
                 isLoading.value = !isLoading.value;
+                // 若有我的收藏，將暫無資料的動畫關掉
+                if (myFavorite.value.length != 0) {
+                    isData.value = false;
+                }
             })
         });
 
@@ -53,7 +62,7 @@ export default {
         return {
             product, favoriteData,
             goLike, removeLike,
-            isLoading
+            isLoading, isData
         }
     }
 }
@@ -71,6 +80,22 @@ export default {
                 <animateTransform attributeName="transform" type="rotate" dur="1s" repeatCount="indefinite" keyTimes="0;1" values="0 50 52.25;360 50 52.25"></animateTransform>
                 </path>
             </svg>
+            <!-- 暫無資料的svg -->
+            <div class="no-data" v-show="!isLoading&&isData">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background:#fff;display:block;" width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+                    <rect fill="#e15b64" x="15" y="15" width="30" height="30" rx="3" ry="3">
+                    <animate attributeName="x" dur="2s" repeatCount="indefinite" keyTimes="0;0.083;0.25;0.333;0.5;0.583;0.75;0.833;1" values="15;55;55;55;55;15;15;15;15" begin="-1.8333333333333333s"></animate>
+                    <animate attributeName="y" dur="2s" repeatCount="indefinite" keyTimes="0;0.083;0.25;0.333;0.5;0.583;0.75;0.833;1" values="15;55;55;55;55;15;15;15;15" begin="-1.3333333333333333s"></animate>
+                    </rect><rect fill="#f8b26a" x="15" y="15" width="30" height="30" rx="3" ry="3">
+                    <animate attributeName="x" dur="2s" repeatCount="indefinite" keyTimes="0;0.083;0.25;0.333;0.5;0.583;0.75;0.833;1" values="15;55;55;55;55;15;15;15;15" begin="-1.1666666666666667s"></animate>
+                    <animate attributeName="y" dur="2s" repeatCount="indefinite" keyTimes="0;0.083;0.25;0.333;0.5;0.583;0.75;0.833;1" values="15;55;55;55;55;15;15;15;15" begin="-0.6666666666666666s"></animate>
+                    </rect><rect fill="#abbd81" x="15" y="15" width="30" height="30" rx="3" ry="3">
+                    <animate attributeName="x" dur="2s" repeatCount="indefinite" keyTimes="0;0.083;0.25;0.333;0.5;0.583;0.75;0.833;1" values="15;55;55;55;55;15;15;15;15" begin="-0.5s"></animate>
+                    <animate attributeName="y" dur="2s" repeatCount="indefinite" keyTimes="0;0.083;0.25;0.333;0.5;0.583;0.75;0.833;1" values="15;55;55;55;55;15;15;15;15" begin="0s"></animate>
+                    </rect>
+                </svg>
+                <h1>目前沒有我的收藏，請點擊產品右上角的愛心！</h1>
+            </div>
 
             <ul class="product-box">
                 <li v-for="(item, idx) in product.data" :key="item.PID">
@@ -96,21 +121,6 @@ export default {
                     </div>
                 </li>
             </ul>
-
-            <!-- <div class="page-wrap" v-show="!isLoading">
-                <ul>
-                    <li class="page-button" @click="prePage">
-                        <a href="javascript:;">&lt;</a>
-                    </li>
-                    <li>
-                        <span>{{ page }}</span>
-                    </li>
-                    <li class="page-button" @click="nextPage">
-                        <a href="javascript:;">&gt;</a>
-                    </li>
-                    <span class="max-page">(共 {{ maxPage }} 頁)</span>
-                </ul>
-            </div> -->
         </div>
     </div>
 </template>
@@ -123,7 +133,6 @@ export default {
         padding-bottom: 30px;
 
         h1 {
-            padding-left: 100px;
             margin-bottom: 15px;
         }
         h4 {
@@ -254,6 +263,28 @@ export default {
                 margin: 0 auto;
                 padding: 200px 0;
                 background:#fff;
+            }
+            .no-data {
+                height: 850px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                h1 {
+                    text-align: center;
+                    color: #e15b64;
+                    animation-name: textColor;
+                    animation-delay: .5s;
+                    animation-duration: 2.5s;
+                    animation-iteration-count: infinite;
+                }
+            }
+            @keyframes textColor {
+                0%   {color: #e15b64;}
+                33%  {color: #f8b26a;}
+                66%  {color: #abbd81;}
+                100% {color: #e15b64;}
             }
         }
     }
