@@ -11,10 +11,10 @@ export default {
         const product = reactive({});  // 要呈現到畫面上的資料
         const amount = ref(1);         // 紀錄商品購買數量
         const isLoading = ref(true);   // 資料未取回之前，放loading SVG圖
+        const isData = ref(true);      // 資料取回若為空，放暫無資料 SVG圖
         const isLogin = ref(JSON.parse(localStorage.getItem("isLogin")));    // 目前的登入狀態
         const myCart = ref(JSON.parse(localStorage.getItem("myCart")));     // 取得購物車清單
         const favoriteData = ref(JSON.parse(localStorage.getItem("myFavorite")));  // 原始(以及要儲存的資料)
-        const isData = ref(true);
         const favorite = ref(null);    // 綁定「加入收藏」按鈕
         let data = null;
 
@@ -107,13 +107,14 @@ export default {
                 isLoading.value = !isLoading.value;
             })
 
-            // 若當下商品在我的收藏清單，調整button文字和顏色
-            if (favoriteData.value.includes(route.params.pid)) {
+            // 若已登入、且當下商品在我的收藏清單，則調整button文字和顏色
+            if (isLogin.value && favoriteData.value.includes(route.params.pid)) {
                 favorite.value.childNodes[1].data = "已加入收藏";
                 favorite.value.classList.add("favorite");
             }
         });
 
+        // 根據FID顯示對應的產品名字
         const nameFID = () => {
             switch(data.FID){
                 case "F0001":
@@ -197,7 +198,7 @@ export default {
         }
         const saveFavorite = (e) => {
             // 若尚未登入
-            if (!isLogin) {
+            if (!isLogin.value) {
                 alert("請先登入");
                 return;
             }
