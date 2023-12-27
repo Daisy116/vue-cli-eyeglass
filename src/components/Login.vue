@@ -146,17 +146,22 @@ export default {
             isForget.value = true;
         }
         const submit = () => {
-            // 解密localStorage裡的會員資料
-            const bytes = AES.decrypt(localStorage.getItem("userData"), '1234AAA');
-            const originalText = bytes.toString(encUtf8);
-            let userData = JSON.parse(originalText);
-            
             telBlur('mobile');
             pwdBlur();
             verifyBlur();
 
             // 輸入框沒過驗證，就不會往下驗證
             if (!reg_phoneType2(formData.tel) || !reg_pwdCommon(formData.pwd) || !verify.value) return;
+
+            if (!localStorage.getItem("userData")) {
+                alert("尚未註冊過，請先註冊！")
+                return;
+            }
+
+            // 解密localStorage裡的會員資料
+            const bytes = AES.decrypt(localStorage.getItem("userData"), '1234AAA');
+            const originalText = bytes.toString(encUtf8);
+            let userData = JSON.parse(originalText);
 
             if (!userData || formData.tel != userData.tel) {
                 alert("無此帳號，請先註冊！")
@@ -165,8 +170,7 @@ export default {
             if (formData.pwd != userData.pwd) {
                 alert("密碼錯誤，是否忘記密碼？")
                 return;
-            }
-                
+            }    
             
             // 成功登入！
             localStorage.setItem("isLogin", true);
