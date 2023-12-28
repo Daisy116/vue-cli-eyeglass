@@ -337,10 +337,10 @@ export default {
     @media screen and (min-width: 0px) and (max-width: 490px) {
         .wrap {
             margin-left: 0;
-            padding: 30px 15px 10px 15px;
+            padding: 10px 15px 10px 15px;
 
             table {
-                margin-top: 60px;
+                margin-top: 75px;
 
                 svg {
                     width: 300px;

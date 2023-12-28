@@ -97,7 +97,7 @@ export default {
                 <h1>目前沒有我的收藏，請點擊產品右上角的愛心！</h1>
             </div>
 
-            <ul class="product-box">
+            <ul class="product-box" v-show="!isLoading&&!isData">
                 <li v-for="(item, idx) in product.data" :key="item.PID">
                     <div class="img-box">
                         <svg @click="goLike(idx, item.PID)"
@@ -296,6 +296,7 @@ export default {
         }
         .wrap {
             margin-left: 0;
+            padding-top: 10px;
             padding-bottom: 0;
 
             h1 {
@@ -311,6 +312,9 @@ export default {
                 .loading {
                     max-height: 500px;
                     padding: 100px 0;
+                }
+                .no-data {
+                    height: 350px;
                 }
                 .product-box {
                     grid-template-columns: 1fr 1fr;

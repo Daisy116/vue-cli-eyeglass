@@ -558,7 +558,7 @@ export default {
             height: 40px;
         }
         .sidebar {
-            top: 145px;
+            top: 125px;
 
             ul {
                 display: flex;
@@ -598,9 +598,7 @@ export default {
         }
         .container {
             min-height: fit-content;
-            padding-left: 15px;
-            padding-right: 15px;
-            padding-bottom: 10px;
+            padding: 10px 15px;
 
             a {
                 width: 170px;
