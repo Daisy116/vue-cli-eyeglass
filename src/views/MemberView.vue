@@ -32,6 +32,7 @@ export default {
         const sexData = ref(null);
         const hint = ref(null);
         const sideBar = ref(null);
+        const title = ref(null);  // 用ref綁定<h1>DOM元素
 
         let input = null;
         let label = null;
@@ -49,19 +50,19 @@ export default {
 
         // 判斷目前是哪種模式，變動<h1>的文字
         watch(mode, item => {
+            document.querySelector(".headProgress").style.width = "0%";
+
             if (item == 1) {
-                document.querySelector("#title").innerText = "修改會員資料";
+                title.value.innerText = "修改會員資料";
                 return;
             }
             if (item == 2) {
-                document.querySelector("#title").innerText = "修改密碼";
+                title.value.innerText = "修改密碼";
                 return;
             }
             if (item == 0) {
-                document.querySelector("#title").innerText = "會員資料";
+                title.value.innerText = "會員資料";
             }
-
-            document.querySelector(".headProgress").style.width = "0%";
         })
 
         function modifyCancel() {
@@ -110,8 +111,8 @@ export default {
         // 點擊「修改會員資料」時，將欄位改成not readOnly
         const changeData = () => {
             mode.value = 1;
-            document.querySelector(".headProgress").style.display = "block";
-
+            document.querySelector(".headProgress").style.visibility = "visible";
+            
             vIF();            
 
             // 將原本按鈕隱藏，打開編輯模式的按鈕
@@ -160,14 +161,14 @@ export default {
                 hint.value.style.color = "darkgreen";
 
                 // 啟動進度條transition
-                document.querySelector(".headProgress").style.display = "block";
+                document.querySelector(".headProgress").style.visibility = "visible";
                 document.querySelector(".headProgress").style.width = "100%";
 
                 setTimeout(() => {
                     modifyCancel();
                     mode.value = 0;
-                    document.querySelector("#title").innerText = "會員資料";
-                    document.querySelector(".headProgress").style.display = "none";
+                    title.value.innerText = "會員資料";
+                    document.querySelector(".headProgress").style.visibility = "hidden";
                     document.querySelector(".headProgress").style.width = "0%"
                 }, 1500);
             }
@@ -194,7 +195,7 @@ export default {
                 hint.value.style.color = "darkgreen";
 
                 // 啟動進度條transition
-                document.querySelector(".headProgress").style.display = "block";
+                document.querySelector(".headProgress").style.visibility = "visible";
                 document.querySelector(".headProgress").style.width = "100%";
 
                 userData.value.pwd = input[5].value;
@@ -211,8 +212,8 @@ export default {
                     dataList.value.style.display = "flex";
                     pwdList.value.style.display = "none";
                     
-                    document.querySelector("#title").innerText = "會員資料";
-                    document.querySelector(".headProgress").style.display = "none";
+                    title.value.innerText = "會員資料";
+                    document.querySelector(".headProgress").style.visibility = "hidden";
                     document.querySelector(".headProgress").style.width = "0%"
                 }, 1500);
             }
@@ -221,7 +222,7 @@ export default {
         // 點擊「修改密碼」按鈕
         const changePwd = () => {
             mode.value = 2;
-            document.querySelector(".headProgress").style.display = "block";
+            document.querySelector(".headProgress").style.visibility = "visible";
 
             // 清空input裡的文字
             clearInput();
@@ -263,7 +264,7 @@ export default {
             dataList, pwdList,
             notModifyMode, modifyMode, sexData, hint, 
             changeData, changePwd, changeCancel, changeComfirm,
-            page, changePage, sideBar
+            page, changePage, sideBar, title
         }
     }
 }
@@ -293,7 +294,7 @@ export default {
     <Myfavorite v-if="page == 2" />
     <ShoppingCart v-if="page == 3" />
     <div v-if="page == 1" class="container">
-        <h1 id="title">會員資料</h1>
+        <h1 ref="title" id="title">會員資料</h1>
 
         <ul ref="dataList" class="member-list">
             <li>
