@@ -255,6 +255,8 @@ export default {
 	// 手機版
 	@media screen and (min-width: 0px) and (max-width: 490px) {
 		.navbar {
+			padding: 0;
+
 			.container-fluid {
 				padding: 10px 12px;
 				background-color: #fff;

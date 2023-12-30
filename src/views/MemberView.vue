@@ -556,7 +556,7 @@ export default {
     // 手機版
     @media screen and (min-width: 0px) and (max-width: 490px) {
         .blank {
-            height: 40px;
+            height: 56px;
         }
         .sidebar {
             top: 125px;
